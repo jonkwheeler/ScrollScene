@@ -2,6 +2,10 @@
 
 ScrollScene is an extra layer on top of ScrollMagic as well as using IntersectionObserver to achieve similar effects.
 
+## Examples
+
+View the online [Storybook](https://scrollscene.jonkwheeler.now.sh).
+
 ## Install
 
 ```js
