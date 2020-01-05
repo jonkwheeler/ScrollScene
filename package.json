@@ -1,0 +1,111 @@
+{
+  "name": "scrollscene",
+  "version": "0.0.0",
+  "description": "ScrollScene is an extra layer on top of ScrollMagic as well as using IntersectionObserver to achieve similar effects.",
+  "author": "Jon K. Wheeler",
+  "license": "MIT",
+  "main": "./dist/commonjs/index.js",
+  "module": "./dist/esm/index.js",
+  "types": "./dist/commonjs/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "sideEffects": false,
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jonkwheeler/ScrollScene.git"
+  },
+  "publishConfig": {
+    "scope": "jonkwheeler",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "config": {
+    "dirBuild": "./dist",
+    "dirCommonjs": "./dist/commonjs",
+    "dirEsm": "./dist/esm",
+    "dirSrc": "./src",
+    "dirStorybook": "./.storybook",
+    "dirStorybookBuild": "./.out",
+    "portStorybook": "8888"
+  },
+  "scripts": {
+    "build:commonjs": "yarn nuke:commonjs && cross-env BABEL_ENV=commonjs babel $npm_package_config_dirSrc --out-dir $npm_package_config_dirCommonjs --extensions \".ts,.tsx,.js,.jsx\" --ignore \"**/*.stories.js\",\"**/story.js\",\"**/stories\",\"**/*.test.js\",\"test.js\",\"**/test\",\"**/*.md\",\"**/docs\" --source-maps inline",
+    "build:esm": "yarn nuke:esm && cross-env BABEL_ENV=esm babel $npm_package_config_dirSrc --out-dir $npm_package_config_dirEsm --extensions \".ts,.tsx,.js,.jsx\" --ignore \"**/*.stories.js\",\"**/story.js\",\"**/stories\",\"**/*.test.js\",\"test.js\",\"**/test\",\"**/*.md\",\"**/docs\" --source-maps inline",
+    "build:types:commonjs": "tsc --project tsconfig.types.cjs.json && tsconfig-replace-paths --project tsconfig.types.cjs.json",
+    "build:types:esm": "tsc --project tsconfig.types.esm.json && tsconfig-replace-paths --project tsconfig.types.esm.json",
+    "build:types": "yarn build:types:commonjs && yarn build:types:esm",
+    "build": "yarn build:commonjs && yarn build:esm && yarn build:types",
+    "dev": "yarn start:storybook",
+    "lint": "eslint .",
+    "nuke:all:install:dev": "yarn nuke:all && yarn && yarn dev",
+    "nuke:all:install": "yarn nuke:all && yarn",
+    "nuke:all": "rm -rf node_modules .cache $npm_package_config_dirBuild yarn.lock yarn-error.log package-lock.json",
+    "nuke:build:rebuild": "yarn nuke:build && yarn build",
+    "nuke:build": "rm -rf $npm_package_config_dirBuild",
+    "nuke:commonjs": "rm -rf $npm_package_config_dirBuild",
+    "nuke:esm": "rm -rf $npm_package_config_dirEsm",
+    "prepublishOnly": "yarn nuke:build:rebuild",
+    "release": "yarn release-it",
+    "start:storybook": "start-storybook -p $npm_package_config_portStorybook -c $npm_package_config_dirStorybook",
+    "storybook": "yarn start:storybook"
+  },
+  "dependencies": {
+    "@storybook/addon-storysource": "^5.2.8",
+    "is-client": "^0.0.2",
+    "lodash.throttle": "^4.1.1"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.7.7",
+    "@babel/core": "^7.7.7",
+    "@babel/plugin-proposal-class-properties": "^7.7.4",
+    "@babel/plugin-proposal-export-default-from": "^7.7.4",
+    "@babel/plugin-proposal-object-rest-spread": "^7.7.7",
+    "@babel/plugin-transform-runtime": "^7.7.6",
+    "@babel/preset-env": "^7.7.7",
+    "@babel/preset-react": "^7.7.4",
+    "@babel/preset-typescript": "^7.7.7",
+    "@babel/runtime": "^7.7.7",
+    "@storybook/addon-knobs": "^5.2.8",
+    "@storybook/addon-notes": "^5.2.8",
+    "@storybook/react": "^5.2.8",
+    "babel-eslint": "^10.0.3",
+    "babel-loader": "^8.0.6",
+    "babel-plugin-add-react-displayname": "^0.0.5",
+    "babel-plugin-module-resolver": "^4.0.0",
+    "cross-env": "^6.0.3",
+    "eslint": "^6.8.0",
+    "eslint-plugin-react": "^7.17.0",
+    "fork-ts-checker-webpack-plugin": "^3.1.1",
+    "gsap": "^3.0.4",
+    "prettier": "^1.19.1",
+    "prop-types": "^15.7.2",
+    "react": "^16.12.0",
+    "react-dom": "^16.12.0",
+    "release-it": "^12.4.3",
+    "scrollmagic": "^2.0.7",
+    "storybook": "^5.1.11",
+    "styled-components": "^4.4.1",
+    "ts-loader": "^6.2.1",
+    "tsconfig-replace-paths": "^0.0.5",
+    "tslint": "^5.20.1",
+    "tslint-config-prettier": "^1.18.0",
+    "tslint-eslint-rules": "^5.4.0",
+    "types-installer": "^1.6.3",
+    "typescript": "^3.7.4",
+    "webpack": "^4.41.5"
+  },
+  "peerDependencies": {
+    "scrollmagic": "^2.0.7"
+  },
+  "bugs": {
+    "url": "https://github.com/jonkwheeler/ScrollScene/issues"
+  },
+  "homepage": "https://github.com/jonkwheeler/ScrollScene#readme",
+  "keywords": [
+    "scrollmagic",
+    "scroll",
+    "scrollscene",
+    "gsap",
+    "greensock"
+  ]
+}

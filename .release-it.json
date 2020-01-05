@@ -1,0 +1,5 @@
+{
+  "non-interactive": false,
+  "requireCleanWorkingDir": true,
+  "buildCommand": "yarn nuke:build:rebuild"
+}
