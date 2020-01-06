@@ -38,7 +38,7 @@ import { ScrollObserver } from 'scrollscene'
 import { ScrollMagic } from 'scrollscene'
 ```
 
-or 
+or
 
 ```js
 import { ScrollMagicSsr } from 'scrollscene'
@@ -58,19 +58,21 @@ See below for examples.
 
 - This project sought out to overcome the issues of using Gsap3 with ScrollMagic, as well as ESM related problems. In the end it added more features, like video playback, scene init breakpoints, scene duration breakpoints, gsap speed controls, and using an IntersectionObserver when it fits your usecase better.
 - This does not include `gsap` or `scrollmagic`. If you plan to use them, you'll need to install them.
-- This works with Gsap without having to import the extra `animation.gsap.js` file from ScrollMagic (though you'll have to install in yourself `yarn add gsap` or `npm install gsap`).
+- This works with Gsap without having to import the extra `animation.gsap.js` file from ScrollMagic (though you'll have to install in yourself `yarn add gsap` or `npm install gsap`). In turn this is smaller than using ScrollMagic and animation.gsap.js.
 - It allows for scene init breakpoints, and for scene duration breakpoints. This will also will on SSR if implemented correctly.
 - This will Tree Shake if your webpack is set up correctly. Next.js, for example, does this for you. Thus you can just `ScrollObserver` and not `ScrollScene` if you wanted and your build should exclude `ScrollScene` and `scrollmagic` (as long as you did import them).
-- Does not work with `jQuery`.
-- I'll add a `setPin` in the future. Though you can `import { ScrollMagic } from 'scrollscene'` do a `setPin` [this way](http://scrollmagic.io/docs/ScrollMagic.Scene.html#setPin). Just remember you also have to create a controller using this method and attach the scene to it.
+- Does not work with `jQuery`. You need to provide a domNodeSelector. Whether a `document.querySelector('#element')` or React ref `myRef.current`.
+- I'll add a `setPin` in the future. Though you can `import { ScrollMagic } from 'scrollscene'` to do a `setPin` [this way](http://scrollmagic.io/docs/ScrollMagic.Scene.html#setPin). Just remember you also have to create a controller using this method and attach the scene to it.
 
 ## Usage
 
 ### ScrollScene (uses ScrollMagic)
 
 ```js
+const myElement = document.querySelector('#element')
+
 const scrollScene = new ScrollScene({
-  triggerElement: domNode,
+  triggerElement: myElement,
 })
 ```
 
@@ -247,6 +249,40 @@ const scrollObserver = new ScrollObserver({
 })
 ```
 
+#### Set a different threshold
+
+The below would create an array of 100 thresholds ([0, 0.1, 0.2, ... 0.98, 0.99, 1]), effectively says any percent from 1 to 100 of the element intersecting the viewport should trigger the scene.
+
+```js
+const scrollObserver = new ScrollObserver({
+  triggerElement: domNode,
+  thresholds: 100,
+})
+```
+
+#### Extra observer options
+
+The below adds extra options to the IntersectionObserver. See others properities you could add [here](https://developer.mozilla.org/en-US/docs/Web/API/IntersectionObserver).
+
+```js
+const scrollObserver = new ScrollObserver({
+  triggerElement: domNode,
+  observer: { rootMargin: '-50% 0%' },
+})
+```
+
+or
+
+```js
+const scrollObserver = new ScrollObserver({
+  triggerElement: domNode,
+  observer: {
+    rootMargin: '0px',
+    threshold: 1.0,
+  },
+})
+```
+
 ### Destroy the scene
 
 Whatever you've named your scene, whether `const scrollScene` or `const scrollObserver`, you can destroy it with...
@@ -261,7 +297,7 @@ scrollObserver.destroy()
 
 ### Using React?
 
-With React it's best to do this inside either a `useEffect` hook or using the `componentDidMount` and `componentWillUnmount` lifecycle. Whatver you choose, make sure to destroy the scene on the unmount.
+With React it's best to do this inside either a `useEffect` hook or using the `componentDidMount` and `componentWillUnmount` lifecycle. Whatever you choose, make sure to destroy the scene on the unmount.
 
 See the Storybook source for good examples (story.js) [found here](https://github.com/jonkwheeler/ScrollScene/blob/master/src/stories/story.js).
 
@@ -322,8 +358,7 @@ const scrollScene = new ScrollScene({
 })
 ```
 
-`duration` also can be responsive, finally! The below would set up a scene that lasts 50vh on mobile, 100% after
-})
+`duration` also can be responsive, finally! The below would set up a scene that lasts 50vh on mobile, 100% after.
 
 ```js
 const scrollScene = new ScrollScene({
