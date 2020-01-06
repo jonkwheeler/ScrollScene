@@ -52,17 +52,35 @@ ScrollScene has `breakpoints, duration, gsap, scrollMagic, toggle, triggerElemen
 
 ScrollObserver has `breakpoints, gsap, observer, thresholds, toggle, triggerElement, video`.
 
+`triggerElement: document.querySelector('#element')` is used to set the element you wish to trigger events based upon.
+
+`gsap` has `gsap: { timeline: myTimeline, reverseSpeed: 2, yoyo: true, delay: 2 }`.
+
+`toggle` has `toggle: { element: containerRef.current, className: 'lets-do-this' }`.
+
+`scrollMagic` has `scrollMagic: { triggerHook: 'onEnter', offset: 50 }`.
+
+`breakpoints: { 0: false, 768: true }` is used to set responsiveness of the new ScrollMagic.Scene, mobile-first.
+
+`duration` is `duration: '100%'` OR `duration: { 0: '50%', 768: '100% }` is used to set responsiveness of the new ScrollMagic.Scene, mobile-first.
+
+`observer: { rootMargin: '-50% 0%' }` is used to pass extra options to pass the IntersectionObserver, like `root`, `rootMargin`, or `threshold` (to override the thresholds option). `observer: { rootMargin: '0px', threshold: 1.0 }`
+
+`thresholds: 1` is to set the number of thresholds you want. `thresholds: 100 = [0, 0.1, 0.2, ... 0.98, 0.99, 1]`
+
 See below for examples.
 
 ## Key Notes
 
 - This project sought out to overcome the issues of using Gsap3 with ScrollMagic, as well as ESM related problems. In the end it added more features, like video playback, scene init breakpoints, scene duration breakpoints, gsap speed controls, and using an IntersectionObserver when it fits your usecase better.
-- This does not include `gsap` or `scrollmagic`. If you plan to use them, you'll need to install them.
+- Is written in TypeScript so you have access to the types.
+- This does not include `gsap` or `scrollmagic`. If you plan to use them, you'll need to install them in addition to `scrollscene`.
 - This works with Gsap without having to import the extra `animation.gsap.js` file from ScrollMagic (though you'll have to install in yourself `yarn add gsap` or `npm install gsap`). In turn this is smaller than using ScrollMagic and animation.gsap.js.
 - It allows for scene init breakpoints, and for scene duration breakpoints. This will also will on SSR if implemented correctly.
+- You do not need to create a ScrollMagic controller. It is done for you.
 - This will Tree Shake if your webpack is set up correctly. Next.js, for example, does this for you. Thus you can just `ScrollObserver` and not `ScrollScene` if you wanted and your build should exclude `ScrollScene` and `scrollmagic` (as long as you did import them).
 - Does not work with `jQuery`. You need to provide a domNodeSelector. Whether a `document.querySelector('#element')` or React ref `myRef.current`.
-- I'll add a `setPin` in the future. Though you can `import { ScrollMagic } from 'scrollscene'` to do a `setPin` [this way](http://scrollmagic.io/docs/ScrollMagic.Scene.html#setPin). Just remember you also have to create a controller using this method and attach the scene to it.
+- I'll add a `setPin` in the future. Though you can do this now with `import { ScrollMagic } from 'scrollscene'` and do a `setPin` [this way](http://scrollmagic.io/docs/ScrollMagic.Scene.html#setPin). Just remember you also have to create a controller using this method and attach the scene to it.
 
 ## Usage
 
