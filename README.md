@@ -32,6 +32,20 @@ import { ScrollScene } from 'scrollscene'
 import { ScrollObserver } from 'scrollscene'
 ```
 
+### ScrollMagic (with SSR catch)
+
+```js
+import { ScrollMagic } from 'scrollscene'
+```
+
+or 
+
+```js
+import { ScrollMagicSsr } from 'scrollscene'
+```
+
+`ScrollMagic` and `ScrollMagicSsr` are the exact same thing.
+
 ## Options
 
 ScrollScene has `breakpoints, duration, gsap, scrollMagic, toggle, triggerElement`.
@@ -48,7 +62,7 @@ See below for examples.
 - It allows for scene init breakpoints, and for scene duration breakpoints. This will also will on SSR if implemented correctly.
 - This will Tree Shake if your webpack is set up correctly. Next.js, for example, does this for you. Thus you can just `ScrollObserver` and not `ScrollScene` if you wanted and your build should exclude `ScrollScene` and `scrollmagic` (as long as you did import them).
 - Does not work with `jQuery`.
-- I'll add a `setPin` in the near future.
+- I'll add a `setPin` in the future. Though you can `import { ScrollMagic } from 'scrollscene'` do a `setPin` [this way](http://scrollmagic.io/docs/ScrollMagic.Scene.html#setPin). Just remember you also have to create a controller using this method and attach the scene to it.
 
 ## Usage
 
