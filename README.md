@@ -50,7 +50,7 @@ import { ScrollMagicSsr } from 'scrollscene'
 
 ScrollScene has `breakpoints, duration, gsap, scrollMagic, toggle, triggerElement`.
 
-ScrollObserver has `breakpoints, gsap, observer, thresholds, toggle, triggerElement, video`.
+ScrollObserver has `breakpoints, gsap, observer, offset, thresholds, toggle, triggerElement, useDuration, video`.
 
 `triggerElement: document.querySelector('#element')` is used to set the element you wish to trigger events based upon.
 
@@ -64,9 +64,13 @@ ScrollObserver has `breakpoints, gsap, observer, thresholds, toggle, triggerElem
 
 `duration` is `duration: '100%'` OR `duration: { 0: '50%', 768: '100% }` is used to set responsiveness of the new ScrollMagic.Scene, mobile-first.
 
+`offset` is used to change the `rootMargin` easy. `offset: '-10%` will be `rootMargin: '-10% 0%'`.
+
 `observer: { rootMargin: '-50% 0%' }` is used to pass extra options to pass the IntersectionObserver, like `root`, `rootMargin`, or `threshold` (to override the thresholds option). `observer: { rootMargin: '0px', threshold: 1.0 }`
 
 `thresholds: 1` is to set the number of thresholds you want. `thresholds: 100 = [0, 0.1, 0.2, ... 0.98, 0.99, 1]`
+
+`useDuration: true` to use the percentage of element visibility to scrub the gsap timeline. Similar to ScrollMagic Duration on a Gsap timeline, but not quite the same if the element is longer than the viewport height, thus the element visibility will never reach 100%, thus the gsap timeline will never reach 100%.
 
 See below for examples.
 
@@ -253,6 +257,27 @@ const scrollObserver = new ScrollObserver({
     yoyo: true,
     delay: 0,
   },
+})
+```
+
+#### Scrub a Gsap timeline based on element visibility
+
+```js
+// create a timeline and add a tween
+const tl = gsap.timeline({ paused: true })
+
+tl.to(squareElement, {
+  x: -200,
+  duration: 1,
+  ease: 'power2.out',
+})
+
+const scrollObserver = new ScrollObserver({
+  triggerElement: domNode,
+  gsap: {
+    timeline: tl,
+  },
+  useDuration: true
 })
 ```
 

@@ -85,6 +85,10 @@ const setTween = function(this: any, options) {
   this.update = function(isIntersecting) {
     isIntersecting ? this.play() : gsap.yoyo ? this.pause() : this.reverse()
   }
+
+  this.scrub = function(intersectionRatio) {
+    tl.progress(intersectionRatio)
+  }
 }
 
 const setPlayer = function(this: any, options) {
@@ -229,6 +233,16 @@ interface IScrollObserver {
   observer?: object
 
   /**
+   * offset
+   * @desc Change the offset. This uses rootMargin thus only works as a negative offset.
+   * @type number | string
+   * @defaultvalue '0% 0%'
+   * @example
+   * offset: 500 // this will be rootMargin: '-500px 0%'
+   */
+  offset?: number | string
+
+  /**
    * thresholds
    * @desc Set the number of thresholds you want.
    * @returns An Array of number from 0 to 1. Add 1 to your number to account for 0.
@@ -260,6 +274,15 @@ interface IScrollObserver {
   triggerElement: HTMLElement | React.ReactNode | any
 
   /**
+   * useDuration
+   * @desc Use the percentage of element visibility to scrub the gsap timeline.
+   * @type boolean
+   * @example
+   * useDuration: true
+   */
+  useDuration?: boolean
+
+  /**
    * video
    * @desc Use to set the options for playing and pausing of the video.
    * @type object
@@ -271,7 +294,7 @@ interface IScrollObserver {
 
 const ScrollObserver = function(
   this: any,
-  { breakpoints, gsap, observer, thresholds, toggle, triggerElement, video }: IScrollObserver,
+  { breakpoints, gsap, observer, offset, thresholds, toggle, triggerElement, useDuration, video }: IScrollObserver,
 ) {
   if (!triggerElement) {
     errorLog(
@@ -283,6 +306,15 @@ const ScrollObserver = function(
   let setToggle
   let setGsap
   let setVideo
+  let setRootMargin = '0% 0%'
+
+  if (typeof offset === 'number') {
+    // protect against positive px values, for now
+    setRootMargin = `-${Math.abs(offset)}px 0%`
+  } else if (typeof offset === 'string') {
+    // protect against positive percentage values, for now
+    setRootMargin = `-${Math.abs(parseFloat(offset))}% 0%`
+  }
 
   if (toggle && isObject(toggle)) {
     setToggle = new setClassName(toggle)
@@ -298,26 +330,31 @@ const ScrollObserver = function(
 
   const observerCallback = function(entries) {
     entries.forEach(({ isIntersecting, intersectionRatio }) => {
-      const active = isIntersecting && (intersectionRatio === 1 || intersectionRatio === 0)
-
-      setToggle && setToggle.update(active)
-      setGsap && setGsap.update(active)
-      setVideo && setVideo.update(active)
+      setToggle && setToggle.update(isIntersecting)
+      setGsap && !useDuration ? setGsap.update(isIntersecting) : setGsap.scrub(intersectionRatio)
+      setVideo && setVideo.update(isIntersecting)
     })
   }
 
-  const Observer = new IntersectionObserver(observerCallback, {
+  const getThresolds = () => {
+    const steps = useDuration ? 199 : thresholds ? thresholds : false
+
     /*
      * Set performance using thresholds
      * @desc Building an array of numbers starting at 0.00 and incrementing at every 0.01
      * @example
      * thresholds = 2 [0, 0.5, 1], thresholds = 3 [0, 0.33, 0.67, 1]
      */
-    threshold: thresholds
-      ? Array.apply(null, new Array(thresholds + 1))
+    return steps
+      ? Array.apply(null, new Array(steps + 1))
           // @ts-ignore
-          .map((n, i) => roundOff(i / thresholds))
-      : [0, 1],
+          .map((n, i) => roundOff(i / steps))
+      : [0, 1]
+  }
+
+  const Observer = new IntersectionObserver(observerCallback, {
+    threshold: getThresolds(),
+    rootMargin: setRootMargin,
     ...observer,
   })
 
