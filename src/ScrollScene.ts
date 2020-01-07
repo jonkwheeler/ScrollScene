@@ -184,11 +184,22 @@ interface IScrollScene {
   gsap?: IScrollObserverGsap
 
   /**
+   * triggerHook
+   * @desc Set the offset of the ScrollMagic scene.
+   * @type  number | string
+   * @defaultvalue 0
+   * @example
+   * offset: 100
+   * offset: '10%'
+   */
+  offset?: number | string
+
+  /**
    * scrollMagic
-   * @desc Extra options to pass the new ScrollMagic.Scene, like triggerHook, offset, etc.
+   * @desc Extra options to pass the new ScrollMagic.Scene, like logLevel, etc.
    * @type object
    * @example
-   * scrollMagic: { triggerHook: 'onEnter' }
+   * scrollMagic: { logLevel: 2 }
    */
   scrollMagic?: object
 
@@ -209,6 +220,16 @@ interface IScrollScene {
    * triggerElement: triggerRef.current
    */
   triggerElement: HTMLElement | React.ReactNode | any
+
+  /**
+   * triggerHook
+   * @desc Set the triggerHook of the ScrollMagic scene.
+   * @type  number
+   * @defaultvalue 'onEnter'
+   * @example
+   * triggerHook: 0.5
+   */
+  triggerHook?: number | string
 }
 
 // add controller var
@@ -216,7 +237,16 @@ let controller
 
 const ScrollScene = function(
   this: any,
-  { breakpoints, duration, gsap, scrollMagic, toggle, triggerElement }: IScrollScene,
+  {
+    breakpoints,
+    duration,
+    gsap,
+    offset = 0,
+    scrollMagic,
+    toggle,
+    triggerElement,
+    triggerHook = 'onEnter',
+  }: IScrollScene,
 ) {
   // mount controller
   if (!controller) {
@@ -232,7 +262,8 @@ const ScrollScene = function(
 
   const Scene = new ScrollMagic.Scene({
     triggerElement,
-    triggerHook: 'onLeave',
+    triggerHook,
+    offset,
     ...scrollMagic,
   })
 

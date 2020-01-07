@@ -128,9 +128,7 @@ storiesOf('ScrollScene|toggle (className)', module)
             className: 'turn-blue',
             reverse: true,
           },
-          scrollMagic: {
-            triggerHook: 1,
-          },
+          triggerHook: 1,
           duration: '100%',
         })
 
@@ -709,7 +707,7 @@ storiesOf('ScrollObserver|gsap', module)
             timeline: tl,
           },
           useDuration: true,
-          thresholds: 100
+          thresholds: 100,
         })
 
         return () => {

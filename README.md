@@ -48,7 +48,7 @@ import { ScrollMagicSsr } from 'scrollscene'
 
 ## Options
 
-ScrollScene has `breakpoints, duration, gsap, scrollMagic, toggle, triggerElement`.
+ScrollScene has `breakpoints, duration, gsap, offset, scrollMagic, toggle, triggerElement, triggerHook`.
 
 ScrollObserver has `breakpoints, gsap, observer, offset, thresholds, toggle, triggerElement, useDuration, video`.
 
@@ -58,13 +58,17 @@ ScrollObserver has `breakpoints, gsap, observer, offset, thresholds, toggle, tri
 
 `toggle` has `toggle: { element: containerRef.current, className: 'lets-do-this' }`.
 
-`scrollMagic` has `scrollMagic: { triggerHook: 'onEnter', offset: 50 }`.
+`offset` under `ScrollScene` is used to change the ScrollMagic `offset`.
+
+`triggerHook` used to change the ScrollMagic `triggerHook`.
+
+`scrollMagic` has `scrollMagic: { loglevel: 1 }`. Add anything from [new ScrollMagic.Scene(options)](http://scrollmagic.io/docs/ScrollMagic.Scene.html#constructor).
 
 `breakpoints: { 0: false, 768: true }` is used to set responsiveness of the new ScrollMagic.Scene, mobile-first.
 
 `duration` is `duration: '100%'` OR `duration: { 0: '50%', 768: '100% }` is used to set responsiveness of the new ScrollMagic.Scene, mobile-first.
 
-`offset` is used to change the `rootMargin` easy. `offset: '-10%` will be `rootMargin: '-10% 0%'`.
+`offset` under `ScrollObserver` is used to change the `rootMargin` easy. `offset: '-10%` will be `rootMargin: '-10% 0%'`.
 
 `observer: { rootMargin: '-50% 0%' }` is used to pass extra options to pass the IntersectionObserver, like `root`, `rootMargin`, or `threshold` (to override the thresholds option). `observer: { rootMargin: '0px', threshold: 1.0 }`
 
@@ -120,14 +124,26 @@ const scrollScene = new ScrollScene({
     className: 'turn-blue',
     reverse: true,
   },
-  scrollMagic: {
-    triggerHook: 1,
-  },
+  triggerHook: 1,
   duration: '100%',
 })
 ```
 
-#### Add extra options from ScrollMagic (like a TriggerHook)
+#### Add extra options from ScrollMagic (like a triggerHook or offset)
+
+```js
+const scrollScene = new ScrollScene({
+  triggerElement: domNode,
+  toggle: {
+    element: anotherDomNode,
+    className: 'turn-blue',
+  },
+  offset: 50,
+  triggerHook: 0.5,
+})
+```
+
+or anything from [new ScrollMagic.Scene(options)](http://scrollmagic.io/docs/ScrollMagic.Scene.html#constructor) under the `scrollMagic` key to contain those options.
 
 ```js
 const scrollScene = new ScrollScene({
@@ -137,7 +153,7 @@ const scrollScene = new ScrollScene({
     className: 'turn-blue',
   },
   scrollMagic: {
-    triggerHook: 1,
+    logLevel: 1,
   },
 })
 ```
@@ -277,7 +293,7 @@ const scrollObserver = new ScrollObserver({
   gsap: {
     timeline: tl,
   },
-  useDuration: true
+  useDuration: true,
 })
 ```
 
