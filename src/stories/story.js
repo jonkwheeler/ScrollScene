@@ -279,7 +279,7 @@ storiesOf('ScrollScene|gsap', module)
     },
   )
   .add(
-    'reverseSpeed: 4',
+    'reverseSpeed: 4, triggerHook: 0',
     () => {
       // init ref
       const containerRef = React.useRef(null)
@@ -310,6 +310,7 @@ storiesOf('ScrollScene|gsap', module)
             timeline: tl,
             reverseSpeed: 4,
           },
+          triggerHook: 0,
         })
 
         return () => {
@@ -321,7 +322,7 @@ storiesOf('ScrollScene|gsap', module)
         <div className="bg-lightgrey transition" ref={containerRef}>
           <div style={{ height: '50vh' }} />
 
-          <h3>reverseSpeed: 4</h3>
+          <h3>reverseSpeed: 4, triggerHook: 0</h3>
           <h1>Scroll Down</h1>
 
           <div style={{ height: '150vh' }} />
