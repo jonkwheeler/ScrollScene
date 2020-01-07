@@ -8,7 +8,7 @@ import notes from '../../README.md'
 
 storiesOf('ScrollScene|toggle (className)', module)
   .add(
-    'Basic Example',
+    'triggerHook: 0',
     () => {
       // init ref
       const containerRef = React.useRef(null)
@@ -28,6 +28,7 @@ storiesOf('ScrollScene|toggle (className)', module)
             element: containerElement,
             className: 'turn-blue',
           },
+          triggerHook: 0,
         })
 
         return () => {
@@ -39,7 +40,7 @@ storiesOf('ScrollScene|toggle (className)', module)
         <div className="bg-lightgrey transition" ref={containerRef}>
           <div style={{ height: '50vh' }} />
 
-          <h3>Basic Example</h3>
+          <h3>triggerHook: 0</h3>
           <h1>Scroll Down</h1>
 
           <div style={{ height: '150vh' }} />
@@ -55,7 +56,7 @@ storiesOf('ScrollScene|toggle (className)', module)
     },
   )
   .add(
-    'TriggerHook = 1',
+    'triggerHook: 0.5',
     () => {
       // init ref
       const containerRef = React.useRef(null)
@@ -75,9 +76,7 @@ storiesOf('ScrollScene|toggle (className)', module)
             element: containerElement,
             className: 'turn-blue',
           },
-          scrollMagic: {
-            triggerHook: 1,
-          },
+          triggerHook: 0.5,
         })
 
         return () => {
@@ -89,7 +88,55 @@ storiesOf('ScrollScene|toggle (className)', module)
         <div className="bg-lightgrey transition" ref={containerRef}>
           <div style={{ height: '50vh' }} />
 
-          <h3>TriggerHook = 1</h3>
+          <h3>triggerHook: 0.5</h3>
+          <h1>Scroll Down</h1>
+
+          <div style={{ height: '150vh' }} />
+
+          <div ref={triggerRef}>When this the middle of the page the page will turn blue</div>
+
+          <div style={{ height: '150vh' }} />
+        </div>
+      )
+    },
+    {
+      notes: { markdown: notes },
+    },
+  )
+  .add(
+    'triggerHook: 1',
+    () => {
+      // init ref
+      const containerRef = React.useRef(null)
+      const triggerRef = React.useRef(null)
+
+      React.useEffect(() => {
+        const { current: containerElement } = containerRef
+        const { current: triggerElement } = triggerRef
+
+        if (!containerElement && !triggerElement) {
+          return undefined
+        }
+
+        const scrollScene = new ScrollScene({
+          triggerElement,
+          toggle: {
+            element: containerElement,
+            className: 'turn-blue',
+          },
+          triggerHook: 1,
+        })
+
+        return () => {
+          scrollScene.destroy()
+        }
+      })
+
+      return (
+        <div className="bg-lightgrey transition" ref={containerRef}>
+          <div style={{ height: '50vh' }} />
+
+          <h3>triggerHook: 1</h3>
           <h1>Scroll Down</h1>
 
           <div style={{ height: '150vh' }} />
@@ -107,7 +154,7 @@ storiesOf('ScrollScene|toggle (className)', module)
     },
   )
   .add(
-    'Duration = 100%, reverse: true',
+    'duration: "100%", reverse: true',
     () => {
       // init ref
       const containerRef = React.useRef(null)
@@ -141,7 +188,7 @@ storiesOf('ScrollScene|toggle (className)', module)
         <div className="bg-lightgrey transition" ref={containerRef}>
           <div style={{ height: '50vh' }} />
 
-          <h3>Duration = 100%, reverse: true</h3>
+          <h3>duration: "100%", reverse: true</h3>
           <h1>Scroll Down</h1>
 
           <div style={{ height: '150vh' }} />
@@ -544,7 +591,7 @@ storiesOf('ScrollObserver|gsap', module)
     },
   )
   .add(
-    'offset: -10%',
+    'offset: "-10%"',
     () => {
       // init ref
       const containerRef = React.useRef(null)
