@@ -244,6 +244,7 @@ storiesOf('ScrollScene|gsap', module)
           gsap: {
             timeline: tl,
           },
+          triggerHook: 0,
         })
 
         return () => {
@@ -346,7 +347,7 @@ storiesOf('ScrollScene|gsap', module)
     },
   )
   .add(
-    'forwardSpeed: 2, reverseSpeed: 1',
+    'forwardSpeed: 2, reverseSpeed: 0.5',
     () => {
       // init ref
       const containerRef = React.useRef(null)
@@ -378,6 +379,7 @@ storiesOf('ScrollScene|gsap', module)
             forwardSpeed: 2,
             reverseSpeed: 0.5,
           },
+          triggerHook: 0,
         })
 
         return () => {
@@ -444,6 +446,7 @@ storiesOf('ScrollScene|gsap', module)
             timeline: tl,
           },
           duration: 500,
+          triggerHook: 0,
         })
 
         return () => {
