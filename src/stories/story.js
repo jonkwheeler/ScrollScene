@@ -793,3 +793,60 @@ storiesOf('ScrollObserver|gsap', module)
       notes: { markdown: notes },
     },
   )
+
+storiesOf('ScrollObserver|video', module).add(
+  'Basic Example',
+  () => {
+    // init ref
+    const videoRef = React.useRef(null)
+
+    React.useEffect(() => {
+      const { current: videoElement } = videoRef
+
+      if (!videoElement) {
+        return undefined
+      }
+
+      const scrollObserver = new ScrollObserver({
+        triggerElement: videoElement,
+        video: {
+          element: videoElement,
+        },
+      })
+
+      return () => {
+        scrollObserver.destroy()
+      }
+    })
+
+    return (
+      <div className="bg-lightgrey transition">
+        <div style={{ height: '50vh' }} />
+
+        <h3>Basic Example</h3>
+        <h1>Scroll Down</h1>
+
+        <div style={{ height: '150vh' }} />
+
+        <div>While the video is visible on the video will play</div>
+        <div style={{ height: '50vh' }} />
+        <video
+          ref={videoRef}
+          style={{ width: '60%' }}
+          poster="https://s3.amazonaws.com/www.invisionapp.com/images/poster.jpg"
+          src="https://s3.amazonaws.com/www.invisionapp.com-studio/689bcee4dbc4cb806445e0dbc87154aa607dff6d/static/video/dsm-repo.mp4"
+          playsInline
+          muted
+          loop
+          controls={false}
+          preload="none"
+        />
+
+        <div style={{ height: '150vh' }} />
+      </div>
+    )
+  },
+  {
+    notes: { markdown: notes },
+  },
+)

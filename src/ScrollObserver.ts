@@ -331,7 +331,7 @@ const ScrollObserver = function(
   const observerCallback = function(entries) {
     entries.forEach(({ isIntersecting, intersectionRatio }) => {
       setToggle && setToggle.update(isIntersecting)
-      setGsap && !useDuration ? setGsap.update(isIntersecting) : setGsap.scrub(intersectionRatio)
+      setGsap && (!useDuration ? setGsap.update(isIntersecting) : setGsap.scrub(intersectionRatio))
       setVideo && setVideo.update(isIntersecting)
     })
   }
