@@ -288,6 +288,8 @@ const ScrollScene = function(
   }
 
   scrollAnimationInit(breakpoints, this.init, this.destroy)
+
+  return Scene
 }
 
 export { ScrollScene }

@@ -1,6 +1,9 @@
-import { errorLog, isObject, roundOff, scrollAnimationInit } from './helpers'
+import { errorLog, isFunc, isObject, scrollAnimationInit, createArray, isString, stringContains } from './helpers'
 
 const nameSpace = 'ScrollObserver'
+
+let visible: boolean = false
+let alreadyFired: boolean = false
 
 const setClassName = function(this: any, options) {
   const toggle = {
@@ -33,8 +36,16 @@ const setClassName = function(this: any, options) {
     toggle.element.classList.contains(toggle.className) && toggle.element.classList.remove(toggle.className)
   }
 
-  this.update = function(isIntersecting) {
-    isIntersecting ? this.add() : this.remove()
+  this.update = function() {
+    if (!alreadyFired && visible) {
+      this.add()
+      alreadyFired = true
+    }
+
+    if (alreadyFired && !visible) {
+      this.remove()
+      alreadyFired = false
+    }
   }
 }
 
@@ -82,8 +93,16 @@ const setTween = function(this: any, options) {
     }
   }
 
-  this.update = function(isIntersecting) {
-    isIntersecting ? this.play() : gsap.yoyo ? this.pause() : this.reverse()
+  this.update = function() {
+    if (!alreadyFired && visible) {
+      this.play()
+      alreadyFired = true
+    }
+
+    if (alreadyFired && !visible) {
+      gsap.yoyo ? this.pause() : this.reverse()
+      alreadyFired = false
+    }
   }
 
   this.scrub = function(intersectionRatio) {
@@ -116,8 +135,47 @@ const setPlayer = function(this: any, options) {
     video.element.pause()
   }
 
-  this.update = function(isIntersecting) {
-    isIntersecting ? this.play() : this.pause()
+  this.update = function() {
+    if (!alreadyFired && visible) {
+      this.play()
+      alreadyFired = true
+    }
+
+    if (alreadyFired && !visible) {
+      this.pause()
+      alreadyFired = false
+    }
+  }
+}
+
+const setFunction: any = function(this: any, options) {
+  const callback = {
+    active: null,
+    notActive: null,
+    ...options,
+  }
+
+  if (!callback.active && !callback.notActive) {
+    errorLog(
+      nameSpace,
+      `Be sure to set a callback active or notActive function in the new ${nameSpace}({ callback: { active: () => console.log('active') } })`,
+    )
+  }
+
+  if ((callback.active && !isFunc(callback.active)) || (callback.notActive && !isFunc(callback.notActive))) {
+    errorLog(nameSpace, `Be sure to set the callback as a function `)
+  }
+
+  this.update = function() {
+    if (!alreadyFired && visible && callback.active) {
+      callback.active()
+      alreadyFired = true
+    }
+
+    if (alreadyFired && !visible && callback.active) {
+      callback.notActive()
+      alreadyFired = false
+    }
   }
 }
 
@@ -215,6 +273,24 @@ interface IScrollObserver {
   breakpoints?: object
 
   /**
+   * callback
+   * @desc Use to set a callback when the scene is active.
+   * @type object
+   * @example
+   * callback: { active: () => (), notActive: () => () }
+   */
+  callback?: object
+
+  /**
+   * destroyImmediately
+   * @desc Use to destroy the scene immediately after firing once the element is visible.
+   * @type boolean
+   * @example
+   * destroyImmediately: true
+   */
+  destroyImmediately?: boolean
+
+  /**
    * gsap
    * @desc Use to set options for the gsap animation of the ScrollObserver.
    * @type object
@@ -290,11 +366,33 @@ interface IScrollObserver {
    * video: { element: videoRef.current }
    */
   video?: IScrollObserverVideo
+
+  /**
+   * whenVisible
+   * @desc Set when the scene should be active based on the percentage of the element visible
+   * @type number
+   * @example
+   * whenVisible: '50%'
+   */
+  whenVisible?: string
 }
 
 const ScrollObserver = function(
   this: any,
-  { breakpoints, gsap, observer, offset, thresholds, toggle, triggerElement, useDuration, video }: IScrollObserver,
+  {
+    breakpoints,
+    callback,
+    destroyImmediately,
+    gsap,
+    observer,
+    offset,
+    whenVisible,
+    thresholds,
+    toggle,
+    triggerElement,
+    useDuration,
+    video,
+  }: IScrollObserver,
 ) {
   if (!triggerElement) {
     errorLog(
@@ -303,9 +401,12 @@ const ScrollObserver = function(
     )
   }
 
+  const $this = this
   let setToggle
   let setGsap
   let setVideo
+  let setCallback
+  let ratio
   let setRootMargin = '0% 0%'
 
   if (typeof offset === 'number') {
@@ -328,28 +429,74 @@ const ScrollObserver = function(
     setVideo = new setPlayer(video)
   }
 
+  if (callback) {
+    setCallback = new setFunction(callback)
+  }
+
   const observerCallback = function(entries) {
     entries.forEach(({ isIntersecting, intersectionRatio }) => {
-      setToggle && setToggle.update(isIntersecting)
-      setGsap && (!useDuration ? setGsap.update(isIntersecting) : setGsap.scrub(intersectionRatio))
-      setVideo && setVideo.update(isIntersecting)
+      /*
+       * To help the wonkiness of IntersectionObserver, isIntersecting firing true when it's really false
+       */
+      if (ratio) {
+        visible = intersectionRatio >= ratio
+      } else if (isIntersecting && !visible) {
+        /*
+         * To help with setCallback and ignoring refiring extra function
+         * calls due to intersectionRatio
+         */
+        visible = true
+      } else if (!isIntersecting && visible) {
+        visible = false
+      }
+
+      setToggle && setToggle.update()
+      setGsap && (!useDuration ? setGsap.update() : setGsap.scrub(intersectionRatio))
+      setVideo && setVideo.update()
+      setCallback && setCallback.update()
+
+      if (isIntersecting && destroyImmediately) {
+        /*
+         * destroy the scene after used once
+         */
+        $this.destroy()
+      }
     })
   }
 
-  const getThresolds = () => {
-    const steps = useDuration ? 199 : thresholds ? thresholds : false
+  const getPercentage = value => {
+    if (!isString(whenVisible) && !stringContains(whenVisible, '%')) {
+      errorLog(nameSpace, 'Be sure to set a percentage as a string. { whenVisible: "50%" }')
+    }
 
-    /*
-     * Set performance using thresholds
-     * @desc Building an array of numbers starting at 0.00 and incrementing at every 0.01
-     * @example
-     * thresholds = 2 [0, 0.5, 1], thresholds = 3 [0, 0.33, 0.67, 1]
-     */
-    return steps
-      ? Array.apply(null, new Array(steps + 1))
-          // @ts-ignore
-          .map((n, i) => roundOff(i / steps))
-      : [0, 1]
+    const parsed = parseInt(value.replace('%', '')) / 100
+
+    ratio = parsed
+
+    return parsed
+  }
+
+  const getThresolds = () => {
+    const defaults = {
+      one: [0, 1],
+      gsap: createArray(199),
+    }
+
+    let returnedThresholds: any = defaults.one
+
+    if (whenVisible) {
+      returnedThresholds = getPercentage(whenVisible)
+    }
+
+    if (useDuration) {
+      returnedThresholds = defaults.gsap
+    }
+
+    if (thresholds) {
+      returnedThresholds = createArray(thresholds)
+    }
+
+    return returnedThresholds
   }
 
   const Observer = new IntersectionObserver(observerCallback, {

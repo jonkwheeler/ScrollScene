@@ -212,6 +212,139 @@ storiesOf('ScrollScene|toggle (className)', module)
     },
   )
 
+storiesOf('ScrollScene|events', module)
+  .add(
+    'on enter, on leave',
+    () => {
+      // init ref
+      const containerRef = React.useRef(null)
+      const triggerRef = React.useRef(null)
+
+      React.useEffect(() => {
+        const { current: containerElement } = containerRef
+        const { current: triggerElement } = triggerRef
+
+        if (!containerElement && !triggerElement) {
+          return undefined
+        }
+
+        const scrollScene = new ScrollScene({
+          triggerElement,
+          toggle: {
+            element: containerElement,
+            className: 'turn-blue',
+            reverse: true,
+          },
+          triggerHook: 1,
+          duration: '100%',
+        })
+
+        scrollScene.on('enter', function(event) {
+          console.log('Scene entered.')
+        })
+
+        scrollScene.on('leave', function(event) {
+          console.log('Scene left.')
+        })
+
+        return () => {
+          scrollScene.destroy()
+        }
+      })
+
+      return (
+        <div className="bg-lightgrey transition" ref={containerRef}>
+          <div style={{ height: '50vh' }} />
+
+          <h3>{`scrollScene.on('enter', function(event) {console.log('Scene entered.')})`.toString()}</h3>
+          <h3>{`scrollScene.on('leave', function(event) {console.log('Scene left.')})`.toString()}</h3>
+          <h1>Scroll Down</h1>
+
+          <div style={{ height: '150vh' }} />
+
+          <div ref={triggerRef}>When this hits the top of the page, console.log('Scene entered.')</div>
+
+          <div style={{ height: '100vh' }} />
+
+          <div ref={triggerRef} style={{ color: 'white' }}>
+            When this hits the top of the page, console.log("Scene left.");
+          </div>
+
+          <div style={{ height: '150vh' }} />
+        </div>
+      )
+    },
+    {
+      notes: { markdown: notes },
+    },
+  )
+  .add(
+    'on progress',
+    () => {
+      // init ref
+      const containerRef = React.useRef(null)
+      const triggerRef = React.useRef(null)
+
+      React.useEffect(() => {
+        const { current: containerElement } = containerRef
+        const { current: triggerElement } = triggerRef
+
+        if (!containerElement && !triggerElement) {
+          return undefined
+        }
+
+        const scrollScene = new ScrollScene({
+          triggerElement,
+          toggle: {
+            element: containerElement,
+            className: 'turn-blue',
+            reverse: true,
+          },
+          triggerHook: 1,
+          duration: '100%',
+        })
+
+        scrollScene.on('progress', function(event) {
+          console.log('Scene progress changed to ' + event.progress)
+        })
+
+        return () => {
+          scrollScene.destroy()
+        }
+      })
+
+      return (
+        <div className="bg-lightgrey transition" ref={containerRef}>
+          <div style={{ height: '50vh' }} />
+
+          <h3>
+            {`scrollScene.on('progress', function(event) {
+          console.log('Scene progress changed to ' + event.progress)
+        })`.toString()}
+          </h3>
+          <h1>Scroll Down</h1>
+
+          <div style={{ height: '150vh' }} />
+
+          <div ref={triggerRef}>
+            When this hits the top of the page, console.log the progress duration the active scene
+          </div>
+
+          <div style={{ height: '100vh' }} />
+
+          <div ref={triggerRef} style={{ color: 'white' }}>
+            When this hits the top of the page, the progress will stop console logging
+          </div>
+
+          <div style={{ height: '150vh' }} />
+        </div>
+      )
+    },
+    {
+      notes: { markdown: notes },
+    },
+  )
+
 storiesOf('ScrollScene|gsap', module)
   .add(
     'Basic Example',
@@ -795,7 +928,7 @@ storiesOf('ScrollObserver|gsap', module)
   )
 
 storiesOf('ScrollObserver|video', module).add(
-  'Basic Example',
+  'whenVisible: "50%"',
   () => {
     // init ref
     const videoRef = React.useRef(null)
@@ -812,6 +945,7 @@ storiesOf('ScrollObserver|video', module).add(
         video: {
           element: videoElement,
         },
+        whenVisible: '50%',
       })
 
       return () => {
@@ -823,12 +957,12 @@ storiesOf('ScrollObserver|video', module).add(
       <div className="bg-lightgrey transition">
         <div style={{ height: '50vh' }} />
 
-        <h3>Basic Example</h3>
+        <h3>whenVisible: '50%'</h3>
         <h1>Scroll Down</h1>
 
         <div style={{ height: '150vh' }} />
 
-        <div>While the video is visible on the video will play</div>
+        <div>While the video is 50% visible on the page the video will play</div>
         <div style={{ height: '50vh' }} />
         <video
           ref={videoRef}
@@ -850,3 +984,157 @@ storiesOf('ScrollObserver|video', module).add(
     notes: { markdown: notes },
   },
 )
+
+storiesOf('ScrollObserver|callback', module)
+  .add(
+    'console.log("active")',
+    () => {
+      // init ref
+      const triggerRef = React.useRef(null)
+
+      React.useEffect(() => {
+        const { current: triggerElement } = triggerRef
+
+        if (!triggerElement) {
+          return undefined
+        }
+
+        const scrollObserver = new ScrollObserver({
+          triggerElement,
+          callback: {
+            active: () => console.log('active'),
+            notActive: () => console.log('notActive'),
+          },
+        })
+
+        return () => {
+          scrollObserver.destroy()
+        }
+      })
+
+      return (
+        <div className="bg-lightgrey transition">
+          <div style={{ height: '50vh' }} />
+
+          <h3>{`callback: {
+            active: () => console.log('active'),
+            notActive: () => console.log('notActive'),
+          }`}</h3>
+          
+          <h1>Scroll Down</h1>
+
+          <div style={{ height: '150vh' }} />
+
+          <div ref={triggerRef}>
+            While this is visible on the page, the console.log("active") will fire, and while it's not,
+            console.log("notActive") will fire
+          </div>
+          <div style={{ height: '50vh' }} />
+
+          <div style={{ height: '150vh' }} />
+        </div>
+      )
+    },
+    {
+      notes: { markdown: notes },
+    },
+  )
+  .add(
+    'destroyImmediately: true',
+    () => {
+      // init ref
+      const triggerRef = React.useRef(null)
+
+      React.useEffect(() => {
+        const { current: triggerElement } = triggerRef
+
+        if (!triggerElement) {
+          return undefined
+        }
+
+        const scrollObserver = new ScrollObserver({
+          triggerElement,
+          callback: {
+            active: () => console.log('active'),
+          },
+          destroyImmediately: true,
+        })
+
+        return () => {
+          scrollObserver.destroy()
+        }
+      })
+
+      return (
+        <div className="bg-lightgrey transition">
+          <div style={{ height: '50vh' }} />
+
+          <h3>console.log("hello-world")</h3>
+          <h1>Scroll Down</h1>
+
+          <div style={{ height: '150vh' }} />
+
+          <div ref={triggerRef}>
+            While this is visible on the page, the console.log("hello-world") will fire once, and then the scene will
+            destory itself
+          </div>
+          <div style={{ height: '50vh' }} />
+
+          <div style={{ height: '150vh' }} />
+        </div>
+      )
+    },
+    {
+      notes: { markdown: notes },
+    },
+  )
+  .add(
+    'whenVisible: "50%"',
+    () => {
+      // init ref
+      const triggerRef = React.useRef(null)
+
+      React.useEffect(() => {
+        const { current: triggerElement } = triggerRef
+
+        if (!triggerElement) {
+          return undefined
+        }
+
+        const scrollObserver = new ScrollObserver({
+          triggerElement,
+          callback: {
+            active: () => console.log('active'),
+            notActive: () => console.log('notActive'),
+          },
+          whenVisible: '50%',
+        })
+
+        return () => {
+          scrollObserver.destroy()
+        }
+      })
+
+      return (
+        <div className="bg-lightgrey transition">
+          <div style={{ height: '50vh' }} />
+
+          <h3>whenVisible: "50%"</h3>
+          <h1>Scroll Down</h1>
+
+          <div style={{ height: '150vh' }} />
+
+          <div ref={triggerRef} style={{ height: 200, background: 'red' }}>
+            While this is visible on the page, the console.log("hello-world") will fire once, and then the scene will
+            destory itself
+          </div>
+          <div style={{ height: '50vh' }} />
+
+          <div style={{ height: '150vh' }} />
+        </div>
+      )
+    },
+    {
+      notes: { markdown: notes },
+    },
+  )

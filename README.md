@@ -48,33 +48,35 @@ import { ScrollMagicSsr } from 'scrollscene'
 
 ## Options
 
-ScrollScene has `breakpoints, duration, gsap, offset, scrollMagic, toggle, triggerElement, triggerHook`.
+### ScrollScene Options
 
-ScrollObserver has `breakpoints, gsap, observer, offset, thresholds, toggle, triggerElement, useDuration, video`.
+| option           | Description / Example                                                                                                                                                                                             |
+| ---------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `breakpoints`    | `breakpoints: { 0: false, 768: true }` is used to set responsiveness of the new ScrollMagic.Scene, mobile-first.                                                                                                  |
+| `duration`       | `duration: '100%'` OR `duration: { 0: '50%', 768: '100% }` is used to set responsiveness of the new ScrollMagic.Scene, mobile-first.                                                                              |
+| `gsap`           | Init a Gsap timeline with `gsap: { timeline: myTimeline, reverseSpeed: 2, yoyo: true, delay: 2 }`.                                                                                                                |
+| `offset`         | Used to change the ScrollMagic `offset`.                                                                                                                                                                          |
+| `scrollMagic`    | `scrollMagic: { loglevel: 1 }`. Add anything from [new ScrollMagic.Scene(options)](http://scrollmagic.io/docs/ScrollMagic.Scene.html#constructor).                                                                |
+| `toggle`         | Toggle a className on an element with `toggle: { element: containerRef.current, className: 'lets-do-this' }`.                                                                                                     |
+| `triggerElement` | `triggerElement: document.querySelector('#element')` is used to set the element you wish to trigger events based upon.                                                                                            |
+| `triggerHook`    | Used to change the ScrollMagic `triggerHook`.                                                                                                                                                                     |
+| methods          | You can actually apply all the ScrollMagic.Scene methods to `ScrollScene`, like `new ScrollScene({...}).on('enter', ())` or `setPin`. See all the options here: http://scrollmagic.io/docs/ScrollMagic.Scene.html |
 
-`triggerElement: document.querySelector('#element')` is used to set the element you wish to trigger events based upon.
+### ScrollObserver Options
 
-`gsap` has `gsap: { timeline: myTimeline, reverseSpeed: 2, yoyo: true, delay: 2 }`.
-
-`toggle` has `toggle: { element: containerRef.current, className: 'lets-do-this' }`.
-
-`offset` under `ScrollScene` is used to change the ScrollMagic `offset`.
-
-`triggerHook` used to change the ScrollMagic `triggerHook`.
-
-`scrollMagic` has `scrollMagic: { loglevel: 1 }`. Add anything from [new ScrollMagic.Scene(options)](http://scrollmagic.io/docs/ScrollMagic.Scene.html#constructor).
-
-`breakpoints: { 0: false, 768: true }` is used to set responsiveness of the new ScrollMagic.Scene, mobile-first.
-
-`duration` is `duration: '100%'` OR `duration: { 0: '50%', 768: '100% }` is used to set responsiveness of the new ScrollMagic.Scene, mobile-first.
-
-`offset` under `ScrollObserver` is used to change the `rootMargin` easy. `offset: '-10%` will be `rootMargin: '-10% 0%'`.
-
-`observer: { rootMargin: '-50% 0%' }` is used to pass extra options to pass the IntersectionObserver, like `root`, `rootMargin`, or `threshold` (to override the thresholds option). `observer: { rootMargin: '0px', threshold: 1.0 }`
-
-`thresholds: 1` is to set the number of thresholds you want. `thresholds: 100 = [0, 0.1, 0.2, ... 0.98, 0.99, 1]`
-
-`useDuration: true` to use the percentage of element visibility to scrub the gsap timeline. Similar to ScrollMagic Duration on a Gsap timeline, but not quite the same if the element is longer than the viewport height, thus the element visibility will never reach 100%, thus the gsap timeline will never reach 100%.
+| option               | Description / Example                                                                                                                                                                                                                                                                                                      |
+| -------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `breakpoints`        | `breakpoints: { 0: false, 768: true }` is used to set responsiveness of the new ScrollMagic.Scene, mobile-first.                                                                                                                                                                                                           |  |
+| `gsap`               | Init a Gsap timeline with `gsap: { timeline: myTimeline, reverseSpeed: 2, yoyo: true, delay: 2 }`.                                                                                                                                                                                                                         |
+| `observer`           | `observer: { rootMargin: '-50% 0%' }` is used to pass extra options to pass the IntersectionObserver, like `root`, `rootMargin`, or `threshold` (to override the thresholds option). `observer: { rootMargin: '0px', threshold: 1.0 }`                                                                                     |
+| `offset`             | Used to change the `rootMargin` easy. `offset: '-10%` will be `rootMargin: '-10% 0%'`. This is a bit wonky and needs more testing.                                                                                                                                                                                         |
+| `thresholds`         | `thresholds: 1` is to set the number of thresholds you want. `thresholds: 100 = [0, 0.1, 0.2, ... 0.98, 0.99, 1]`. It's easy to use `whenVisible`.                                                                                                                                                                         |
+| `toggle`             | Toggle a className on an element with `toggle: { element: containerRef.current, className: 'lets-do-this' }`.                                                                                                                                                                                                              |
+| `triggerElement`     | `triggerElement: document.querySelector('#element')` is used to set the element you wish to trigger events based upon.                                                                                                                                                                                                     |
+| `useDuration`        | `useDuration: true` to use the percentage of element visibility to scrub the gsap timeline. Similar to ScrollMagic Duration on a Gsap timeline, but not quite the same if the element is longer than the viewport height, thus the element visibility will never reach 100%, thus the gsap timeline will never reach 100%. |
+| `destroyImmediately` | `destroyImmediately: true` to destroy the scene immediately after firing once the element is visible.                                                                                                                                                                                                                      |
+| `whenVisible`        | `whenVisible: '50%'` make the scene active when the triggerElement is visible whatever percentage you set. "50%" means to fire the event when the element is 50% in the viewport. This will override `thresholds`.                                                                                                         |
+| `callback`           | For adding callback functions. Make sure you pass functions. You can supply one or both callbacks. `callback: { active: () => (), notActive: () => () }`                                                                                                                                                                   |
 
 See below for examples.
 
@@ -88,7 +90,7 @@ See below for examples.
 - You do not need to create a ScrollMagic controller. It is done for you.
 - This will Tree Shake if your webpack is set up correctly. Next.js, for example, does this for you. Thus you can just `ScrollObserver` and not `ScrollScene` if you wanted and your build should exclude `ScrollScene` and `scrollmagic` (as long as you did import them).
 - Does not work with `jQuery`. You need to provide a domNodeSelector. Whether a `document.querySelector('#element')` or React ref `myRef.current`.
-- I'll add a `setPin` in the future. Though you can do this now with `import { ScrollMagic } from 'scrollscene'` and do a `setPin` [this way](http://scrollmagic.io/docs/ScrollMagic.Scene.html#setPin). Just remember you also have to create a controller using this method and attach the scene to it.
+- You can add all the methods from ScrollMagic.Scene directly onto the `scrollScene`. See options here http://scrollmagic.io/docs/ScrollMagic.Scene.html. You can do a `setPin`, or `on` event handler. 
 
 ## Usage
 
@@ -156,6 +158,16 @@ const scrollScene = new ScrollScene({
     logLevel: 1,
   },
 })
+```
+
+Add event handlers (`on`) or `setPin`. See options here http://scrollmagic.io/docs/ScrollMagic.Scene.html. 
+
+```js
+const scrollScene = new ScrollScene({
+  triggerElement: domNode,
+})
+
+scrollScene.on('enter', function(event) {console.log('Scene entered.')})
 ```
 
 #### Using GSAP (Greensock)
@@ -305,6 +317,25 @@ const scrollObserver = new ScrollObserver({
   video: {
     element: videoTagDomNode,
   },
+})
+```
+
+
+#### Using a scene once
+
+```js
+const scrollObserver = new ScrollObserver({
+  triggerElement: domNode,
+  destroyImmediately: true
+})
+```
+
+#### Set a percentage for the visibility threshold
+
+```js
+const scrollObserver = new ScrollObserver({
+  triggerElement: domNode,
+  whenVisible: '50%',
 })
 ```
 
