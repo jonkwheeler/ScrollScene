@@ -158,7 +158,7 @@ const setFunction: any = function(this: any, options) {
   if (!callback.active && !callback.notActive) {
     errorLog(
       nameSpace,
-      `Be sure to set a callback active or notActive function in the new ${nameSpace}({ callback: { active: () => console.log('active') } })`,
+      `Be sure to set a callback active or notActive function in the new ${nameSpace}({ callback: { active: () => () } })`,
     )
   }
 
