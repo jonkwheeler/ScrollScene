@@ -1014,7 +1014,7 @@ storiesOf('ScrollObserver|video', module).add(
       <div className="bg-lightgrey transition">
         <div style={{ height: '50vh' }} />
 
-        <h3>whenVisible: '50%'</h3>
+        <h3>whenVisible: '80%'</h3>
         <h1>Scroll Down</h1>
 
         <div style={{ height: '150vh' }} />

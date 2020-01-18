@@ -1,4 +1,4 @@
-[![npm version](https://badge.fury.io/js/scrollscene.svg)](https://badge.fury.io/js/scrollscene)
+[![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/jonkwheeler/ScrollScene?label=latest%20release)](https://img.shields.io/github/v/tag/jonkwheeler/ScrollScene?color=forest&label=latest%20release)
 
 # ScrollScene
 
