@@ -962,11 +962,68 @@ storiesOf('ScrollObserver|video', module).add(
 
         <div style={{ height: '150vh' }} />
 
-        <div>While the video is 50% visible on the page the video will play</div>
+        <div>While the video is 50% visible on the page the video will play, and pause when not 50%</div>
         <div style={{ height: '50vh' }} />
         <video
           ref={videoRef}
-          style={{ width: '60%' }}
+          style={{ width: '40%' }}
+          poster="https://s3.amazonaws.com/www.invisionapp.com/images/poster.jpg"
+          src="https://s3.amazonaws.com/www.invisionapp.com-studio/689bcee4dbc4cb806445e0dbc87154aa607dff6d/static/video/dsm-repo.mp4"
+          playsInline
+          muted
+          loop
+          controls={false}
+          preload="none"
+        />
+
+        <div style={{ height: '150vh' }} />
+      </div>
+    )
+  },
+  {
+    notes: { markdown: notes },
+  },
+)
+.add(
+  'whenVisible: "80%"',
+  () => {
+    // init ref
+    const videoRef = React.useRef(null)
+
+    React.useEffect(() => {
+      const { current: videoElement } = videoRef
+
+      if (!videoElement) {
+        return undefined
+      }
+
+      const scrollObserver = new ScrollObserver({
+        triggerElement: videoElement,
+        video: {
+          element: videoElement,
+        },
+        whenVisible: '80%',
+      })
+
+      return () => {
+        scrollObserver.destroy()
+      }
+    })
+
+    return (
+      <div className="bg-lightgrey transition">
+        <div style={{ height: '50vh' }} />
+
+        <h3>whenVisible: '50%'</h3>
+        <h1>Scroll Down</h1>
+
+        <div style={{ height: '150vh' }} />
+
+        <div>While the video is 80% visible on the page the video will play, and pause when not 80%</div>
+        <div style={{ height: '50vh' }} />
+        <video
+          ref={videoRef}
+          style={{ width: '40%' }}
           poster="https://s3.amazonaws.com/www.invisionapp.com/images/poster.jpg"
           src="https://s3.amazonaws.com/www.invisionapp.com-studio/689bcee4dbc4cb806445e0dbc87154aa607dff6d/static/video/dsm-repo.mp4"
           playsInline
@@ -1129,6 +1186,70 @@ storiesOf('ScrollObserver|callback', module)
             destory itself
           </div>
           <div style={{ height: '50vh' }} />
+
+          <div style={{ height: '150vh' }} />
+        </div>
+      )
+    },
+    {
+      notes: { markdown: notes },
+    },
+  ).add(
+    'multiple triggers',
+    () => {
+      // init ref
+      const triggerRef1 = React.useRef(null)
+      const triggerRef2 = React.useRef(null)
+
+      React.useEffect(() => {
+        const { current: triggerElement1 } = triggerRef1
+        const { current: triggerElement2 } = triggerRef2
+
+        if (!triggerElement1 && !triggerElement2) {
+          return undefined
+        }
+
+        const scrollObserver1 = new ScrollObserver({
+          triggerElement: triggerElement1,
+          callback: {
+            active: () => console.log('trigger 1 active'),
+            notActive: () => console.log('trigger 1 notActive'),
+          },
+        })
+        
+        const scrollObserver2 = new ScrollObserver({
+          triggerElement: triggerElement2,
+          callback: {
+            active: () => console.log('trigger 2 active'),
+            notActive: () => console.log('trigger 2 notActive'),
+          },
+        })
+
+        return () => {
+          scrollObserver1.destroy()
+          scrollObserver2.destroy()
+        }
+      })
+
+      return (
+        <div className="bg-lightgrey transition">
+          <div style={{ height: '50vh' }} />
+
+          <h3>multiple triggers</h3>
+          
+          <h1>Scroll Down</h1>
+
+          <div style={{ height: '150vh' }} />
+
+          <div ref={triggerRef1}>
+            While this is visible on the page, the console.log("trigger 1 active") will fire, and while it's not,
+            console.log("trigger 1 notActive") will fire
+          </div>
+          <div style={{ height: '75vh' }} />
+          <div ref={triggerRef2}>
+            While this is visible on the page, the console.log("trigger 2 active") will fire, and while it's not,
+            console.log("trigger 2 notActive") will fire
+          </div>
 
           <div style={{ height: '150vh' }} />
         </div>

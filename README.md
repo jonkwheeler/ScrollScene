@@ -1,3 +1,5 @@
+[![npm version](https://badge.fury.io/js/scrollscene.svg)](https://badge.fury.io/js/scrollscene)
+
 # ScrollScene
 
 ScrollScene is an extra layer on top of ScrollMagic as well as using IntersectionObserver to achieve similar effects.
@@ -48,7 +50,7 @@ import { ScrollMagicSsr } from 'scrollscene'
 
 ## Options
 
-### ScrollScene Options
+### ScrollScene Options (uses ScrollMagic)
 
 | option           | Description / Example                                                                                                                                                                                             |
 | ---------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -62,7 +64,7 @@ import { ScrollMagicSsr } from 'scrollscene'
 | `triggerHook`    | Used to change the ScrollMagic `triggerHook`.                                                                                                                                                                     |
 | methods          | You can actually apply all the ScrollMagic.Scene methods to `ScrollScene`, like `new ScrollScene({...}).on('enter', ())` or `setPin`. See all the options here: http://scrollmagic.io/docs/ScrollMagic.Scene.html |
 
-### ScrollObserver Options
+### ScrollObserver Options (uses IntersectionObserver)
 
 | option               | Description / Example                                                                                                                                                                                                                                                                                                      |
 | -------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |

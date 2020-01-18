@@ -2,8 +2,11 @@ import { errorLog, isFunc, isObject, scrollAnimationInit, createArray, isString,
 
 const nameSpace = 'ScrollObserver'
 
-let visible: boolean = false
-let alreadyFired: boolean = false
+// @ts-ignore
+const state = function(visible, alreadyFired) {
+  this.visible = false
+  this.alreadyFired = false
+}
 
 const setClassName = function(this: any, options) {
   const toggle = {
@@ -36,15 +39,15 @@ const setClassName = function(this: any, options) {
     toggle.element.classList.contains(toggle.className) && toggle.element.classList.remove(toggle.className)
   }
 
-  this.update = function() {
-    if (!alreadyFired && visible) {
+  this.update = function(setState) {
+    if (!setState.alreadyFired && setState.visible) {
       this.add()
-      alreadyFired = true
+      setState.alreadyFired = true
     }
 
-    if (alreadyFired && !visible) {
+    if (setState.alreadyFired && !setState.visible) {
       this.remove()
-      alreadyFired = false
+      setState.alreadyFired = false
     }
   }
 }
@@ -93,15 +96,15 @@ const setTween = function(this: any, options) {
     }
   }
 
-  this.update = function() {
-    if (!alreadyFired && visible) {
+  this.update = function(setState) {
+    if (!setState.alreadyFired && setState.visible) {
       this.play()
-      alreadyFired = true
+      setState.alreadyFired = true
     }
 
-    if (alreadyFired && !visible) {
+    if (setState.alreadyFired && !setState.visible) {
       gsap.yoyo ? this.pause() : this.reverse()
-      alreadyFired = false
+      setState.alreadyFired = false
     }
   }
 
@@ -135,15 +138,15 @@ const setPlayer = function(this: any, options) {
     video.element.pause()
   }
 
-  this.update = function() {
-    if (!alreadyFired && visible) {
+  this.update = function(setState) {
+    if (!setState.alreadyFired && setState.visible) {
       this.play()
-      alreadyFired = true
+      setState.alreadyFired = true
     }
 
-    if (alreadyFired && !visible) {
+    if (setState.alreadyFired && !setState.visible) {
       this.pause()
-      alreadyFired = false
+      setState.alreadyFired = false
     }
   }
 }
@@ -166,15 +169,15 @@ const setFunction: any = function(this: any, options) {
     errorLog(nameSpace, `Be sure to set the callback as a function `)
   }
 
-  this.update = function() {
-    if (!alreadyFired && visible && callback.active) {
+  this.update = function(setState) {
+    if (!setState.alreadyFired && setState.visible && callback.active) {
       callback.active()
-      alreadyFired = true
+      setState.alreadyFired = true
     }
 
-    if (alreadyFired && !visible && callback.active) {
+    if (setState.alreadyFired && !setState.visible && callback.active) {
       callback.notActive()
-      alreadyFired = false
+      setState.alreadyFired = false
     }
   }
 }
@@ -408,6 +411,7 @@ const ScrollObserver = function(
   let setCallback
   let ratio
   let setRootMargin = '0% 0%'
+  let setState = new state(false, false)
 
   if (typeof offset === 'number') {
     // protect against positive px values, for now
@@ -439,21 +443,21 @@ const ScrollObserver = function(
        * To help the wonkiness of IntersectionObserver, isIntersecting firing true when it's really false
        */
       if (ratio) {
-        visible = intersectionRatio >= ratio
-      } else if (isIntersecting && !visible) {
+        setState.visible = intersectionRatio >= ratio
+      } else if (isIntersecting && !setState.visible) {
         /*
          * To help with setCallback and ignoring refiring extra function
          * calls due to intersectionRatio
          */
-        visible = true
-      } else if (!isIntersecting && visible) {
-        visible = false
+        setState.visible = true
+      } else if (!isIntersecting && setState.visible) {
+        setState.visible = false
       }
 
-      setToggle && setToggle.update()
-      setGsap && (!useDuration ? setGsap.update() : setGsap.scrub(intersectionRatio))
-      setVideo && setVideo.update()
-      setCallback && setCallback.update()
+      setToggle && setToggle.update(setState)
+      setGsap && (!useDuration ? setGsap.update(setState) : setGsap.scrub(intersectionRatio))
+      setVideo && setVideo.update(setState)
+      setCallback && setCallback.update(setState)
 
       if (isIntersecting && destroyImmediately) {
         /*
