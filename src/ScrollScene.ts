@@ -163,6 +163,15 @@ interface IScrollScene {
   breakpoints?: object
 
   /**
+   * controller
+   * @desc Extra options to pass the new ScrollMagic.Controller, like vertical, etc.
+   * @type object
+   * @example
+   * controller: { vertical: false }
+   */
+  controller?: object
+
+  /**
    * duration
    * @desc Use to set responsiveness of the new ScrollMagic.Scene, mobile-first (if setting breakpoints)
    * Must be string for percentage, and number for pixel.
@@ -195,13 +204,13 @@ interface IScrollScene {
   offset?: number | string
 
   /**
-   * scrollMagic
+   * scene
    * @desc Extra options to pass the new ScrollMagic.Scene, like logLevel, etc.
    * @type object
    * @example
-   * scrollMagic: { logLevel: 2 }
+   * scene: { logLevel: 2 }
    */
-  scrollMagic?: object
+  scene?: object
 
   /**
    * toggle
@@ -230,28 +239,49 @@ interface IScrollScene {
    * triggerHook: 0.5
    */
   triggerHook?: number | string
+
+  /**
+   * useGlobalController
+   * @desc Chose whether or not to use the globalController provided for you, or a fresh new ScrollMagic.Controller instance.
+   * @type boolean
+   * @defaultValue true
+   * @example
+   * useGlobalController: false
+   */
+  useGlobalController?: boolean
 }
 
 // add controller var
-let controller
+let globalController
 
 const ScrollScene = function(
   this: any,
   {
     breakpoints,
+    controller = {},
     duration,
     gsap,
     offset = 0,
-    scrollMagic,
+    scene = {},
     toggle,
     triggerElement,
     triggerHook = 'onEnter',
+    useGlobalController = true,
   }: IScrollScene,
 ) {
-  // mount controller
-  if (!controller) {
-    controller = new ScrollMagic.Controller()
+  let localController
+
+  // check if using a local controller
+  if (!useGlobalController) {
+    localController = new ScrollMagic.Controller(controller)
   }
+
+  // mount controller
+  if (!globalController && useGlobalController) {
+    globalController = new ScrollMagic.Controller(controller)
+  }
+
+  const controllerIsUse = localController ? localController : globalController
 
   if (!triggerElement) {
     errorLog(
@@ -264,7 +294,7 @@ const ScrollScene = function(
     triggerElement,
     triggerHook,
     offset,
-    ...scrollMagic,
+    ...scene,
   })
 
   if (duration) {
@@ -280,16 +310,17 @@ const ScrollScene = function(
   }
 
   this.init = function() {
-    controller && Scene.addTo(controller)
+    controllerIsUse && Scene.addTo(controllerIsUse)
   }
 
   this.destroy = function() {
     Scene.remove()
   }
 
-  scrollAnimationInit(breakpoints, this.init, this.destroy)
+  this.Scene = Scene
+  this.Controller = controllerIsUse
 
-  return Scene
+  scrollAnimationInit(breakpoints, this.init, this.destroy)
 }
 
 export { ScrollScene }

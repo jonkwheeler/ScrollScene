@@ -55,14 +55,15 @@ import { ScrollMagicSsr } from 'scrollscene'
 | option           | Description / Example                                                                                                                                                                                             |
 | ---------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `breakpoints`    | `breakpoints: { 0: false, 768: true }` is used to set responsiveness of the new ScrollMagic.Scene, mobile-first.                                                                                                  |
+| `controller`    | `controller: { vertical: false }`. Add anything from [new ScrollMagic.Controller(options)](http://scrollmagic.io/docs/ScrollMagic.Controller.html#constructor).                                                    |
 | `duration`       | `duration: '100%'` OR `duration: { 0: '50%', 768: '100% }` is used to set responsiveness of the new ScrollMagic.Scene, mobile-first.                                                                              |
 | `gsap`           | Init a Gsap timeline with `gsap: { timeline: myTimeline, reverseSpeed: 2, yoyo: true, delay: 2 }`.                                                                                                                |
 | `offset`         | Used to change the ScrollMagic `offset`.                                                                                                                                                                          |
-| `scrollMagic`    | `scrollMagic: { loglevel: 1 }`. Add anything from [new ScrollMagic.Scene(options)](http://scrollmagic.io/docs/ScrollMagic.Scene.html#constructor).                                                                |
+| `scene`    | `scene: { loglevel: 1 }`. Add anything from [new ScrollMagic.Scene(options)](http://scrollmagic.io/docs/ScrollMagic.Scene.html#constructor).                                                                            |
 | `toggle`         | Toggle a className on an element with `toggle: { element: containerRef.current, className: 'lets-do-this' }`.                                                                                                     |
 | `triggerElement` | `triggerElement: document.querySelector('#element')` is used to set the element you wish to trigger events based upon.                                                                                            |
 | `triggerHook`    | Used to change the ScrollMagic `triggerHook`.                                                                                                                                                                     |
-| methods          | You can actually apply all the ScrollMagic.Scene methods to `ScrollScene`, like `new ScrollScene({...}).on('enter', ())` or `setPin`. See all the options here: http://scrollmagic.io/docs/ScrollMagic.Scene.html |
+| methods          | You can actually apply all the ScrollMagic.Scene methods to `ScrollScene`, like `const scrollScene = new ScrollScene({...}); scrollScene.Scene.on('enter', ())` or `setPin`. See all the options here: http://scrollmagic.io/docs/ScrollMagic.Scene.html. The same goes for ScrollMagic.Controller, `scrollScene.Controller.destroy(true)`, but be careful if you're using the built-in `globalController`. |
 
 ### ScrollObserver Options (uses IntersectionObserver)
 
@@ -147,7 +148,7 @@ const scrollScene = new ScrollScene({
 })
 ```
 
-or anything from [new ScrollMagic.Scene(options)](http://scrollmagic.io/docs/ScrollMagic.Scene.html#constructor) under the `scrollMagic` key to contain those options.
+or anything from [new ScrollMagic.Scene(options)](http://scrollmagic.io/docs/ScrollMagic.Scene.html#constructor) under the `scene` key to contain those options.
 
 ```js
 const scrollScene = new ScrollScene({
@@ -156,9 +157,38 @@ const scrollScene = new ScrollScene({
     element: anotherDomNode,
     className: 'turn-blue',
   },
-  scrollMagic: {
+  scene: {
     logLevel: 1,
   },
+})
+
+```
+
+Same for [new ScrollMagic.Controller(options)](http://scrollmagic.io/docs/ScrollMagic.Controller.html#constructor) under the `controller` key to contain those options.
+
+```js
+const scrollScene = new ScrollScene({
+  triggerElement: domNode,
+  toggle: {
+    element: anotherDomNode,
+    className: 'turn-blue',
+  },
+  controller: {
+    logLevel: 3,
+  },
+})
+```
+
+Use a new local controller
+
+```js
+const scrollScene = new ScrollScene({
+  triggerElement: domNode,
+  toggle: {
+    element: anotherDomNode,
+    className: 'turn-blue',
+  },
+  useGlobalController: false,
 })
 ```
 
@@ -169,7 +199,17 @@ const scrollScene = new ScrollScene({
   triggerElement: domNode,
 })
 
-scrollScene.on('enter', function(event) {console.log('Scene entered.')})
+scrollScene.Scene.on('enter', function(event) {console.log('Scene entered.')})
+```
+
+Add methods to the controller. See options here http://scrollmagic.io/docs/ScrollMagic.Controller.html. But be careful if you're using the built-in `globalController`, as it'll impact all the scenes you have.
+
+```js
+const scrollScene = new ScrollScene({
+  triggerElement: domNode,
+})
+
+scrollScene.Controller.destroy(true)
 ```
 
 #### Using GSAP (Greensock)

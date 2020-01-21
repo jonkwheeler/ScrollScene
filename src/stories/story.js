@@ -239,11 +239,11 @@ storiesOf('ScrollScene|events', module)
           duration: '100%',
         })
 
-        scrollScene.on('enter', function(event) {
+        scrollScene.Scene.on('enter', function(event) {
           console.log('Scene entered.')
         })
 
-        scrollScene.on('leave', function(event) {
+        scrollScene.Scene.on('leave', function(event) {
           console.log('Scene left.')
         })
 
@@ -256,8 +256,8 @@ storiesOf('ScrollScene|events', module)
         <div className="bg-lightgrey transition" ref={containerRef}>
           <div style={{ height: '50vh' }} />
 
-          <h3>{`scrollScene.on('enter', function(event) {console.log('Scene entered.')})`.toString()}</h3>
-          <h3>{`scrollScene.on('leave', function(event) {console.log('Scene left.')})`.toString()}</h3>
+          <h3>{`scrollScene.Scene.on('enter', function(event) {console.log('Scene entered.')})`.toString()}</h3>
+          <h3>{`scrollScene.Scene.on('leave', function(event) {console.log('Scene left.')})`.toString()}</h3>
           <h1>Scroll Down</h1>
 
           <div style={{ height: '150vh' }} />
@@ -304,7 +304,7 @@ storiesOf('ScrollScene|events', module)
           duration: '100%',
         })
 
-        scrollScene.on('progress', function(event) {
+        scrollScene.Scene.on('progress', function(event) {
           console.log('Scene progress changed to ' + event.progress)
         })
 
@@ -318,7 +318,7 @@ storiesOf('ScrollScene|events', module)
           <div style={{ height: '50vh' }} />
 
           <h3>
-            {`scrollScene.on('progress', function(event) {
+            {`scrollScene.Scene.on('progress', function(event) {
           console.log('Scene progress changed to ' + event.progress)
         })`.toString()}
           </h3>
@@ -332,7 +332,7 @@ storiesOf('ScrollScene|events', module)
 
           <div style={{ height: '100vh' }} />
 
-          <div ref={triggerRef} style={{ color: 'white' }}>
+          <div style={{ color: 'white' }}>
             When this hits the top of the page, the progress will stop console logging
           </div>
 
@@ -613,6 +613,63 @@ storiesOf('ScrollScene|gsap', module)
       notes: { markdown: notes },
     },
   )
+
+storiesOf('ScrollScene|controller', module).add(
+  'add options',
+  () => {
+    // init ref
+    const containerRef = React.useRef(null)
+    const triggerRef = React.useRef(null)
+
+    React.useEffect(() => {
+      const { current: containerElement } = containerRef
+      const { current: triggerElement } = triggerRef
+
+      if (!containerElement && !triggerElement) {
+        return undefined
+      }
+
+      const scrollScene = new ScrollScene({
+        triggerElement,
+        toggle: {
+          element: containerElement,
+          className: 'turn-blue',
+          reverse: true,
+        },
+        triggerHook: 1,
+        duration: '100%',
+        controller: { loglevel: 3 },
+        useGlobalController: false,
+      })
+
+      console.log(scrollScene.Controller.info())
+
+      return () => {
+        scrollScene.destroy()
+      }
+    })
+
+    return (
+      <div className="bg-lightgrey transition" ref={containerRef}>
+        <div style={{ height: '50vh' }} />
+
+        <h3>{`controller: { loglevel: 3 } will log all the goods`.toString()}</h3>
+        <h1>Scroll and refresh page after leaving.</h1>
+        <h4>Otherwise you'll get annoyed with the amount of console.logging</h4>
+
+        <div style={{ height: '150vh' }} />
+
+        <div ref={triggerRef}>Scroll and the console.logging will begin.</div>
+        <div>This page is using a local controller. Refresh page after leaving.</div>
+
+        <div style={{ height: '150vh' }} />
+      </div>
+    )
+  },
+  {
+    notes: { markdown: notes },
+  },
+)
 
 storiesOf('ScrollObserver|toggle (className)', module).add(
   'Basic Example',
@@ -927,120 +984,121 @@ storiesOf('ScrollObserver|gsap', module)
     },
   )
 
-storiesOf('ScrollObserver|video', module).add(
-  'whenVisible: "50%"',
-  () => {
-    // init ref
-    const videoRef = React.useRef(null)
+storiesOf('ScrollObserver|video', module)
+  .add(
+    'whenVisible: "50%"',
+    () => {
+      // init ref
+      const videoRef = React.useRef(null)
 
-    React.useEffect(() => {
-      const { current: videoElement } = videoRef
+      React.useEffect(() => {
+        const { current: videoElement } = videoRef
 
-      if (!videoElement) {
-        return undefined
-      }
+        if (!videoElement) {
+          return undefined
+        }
 
-      const scrollObserver = new ScrollObserver({
-        triggerElement: videoElement,
-        video: {
-          element: videoElement,
-        },
-        whenVisible: '50%',
+        const scrollObserver = new ScrollObserver({
+          triggerElement: videoElement,
+          video: {
+            element: videoElement,
+          },
+          whenVisible: '50%',
+        })
+
+        return () => {
+          scrollObserver.destroy()
+        }
       })
 
-      return () => {
-        scrollObserver.destroy()
-      }
-    })
+      return (
+        <div className="bg-lightgrey transition">
+          <div style={{ height: '50vh' }} />
 
-    return (
-      <div className="bg-lightgrey transition">
-        <div style={{ height: '50vh' }} />
+          <h3>whenVisible: '50%'</h3>
+          <h1>Scroll Down</h1>
 
-        <h3>whenVisible: '50%'</h3>
-        <h1>Scroll Down</h1>
+          <div style={{ height: '150vh' }} />
 
-        <div style={{ height: '150vh' }} />
+          <div>While the video is 50% visible on the page the video will play, and pause when not 50%</div>
+          <div style={{ height: '50vh' }} />
+          <video
+            ref={videoRef}
+            style={{ width: '40%' }}
+            poster="https://s3.amazonaws.com/www.invisionapp.com/images/poster.jpg"
+            src="https://s3.amazonaws.com/www.invisionapp.com-studio/689bcee4dbc4cb806445e0dbc87154aa607dff6d/static/video/dsm-repo.mp4"
+            playsInline
+            muted
+            loop
+            controls={false}
+            preload="none"
+          />
 
-        <div>While the video is 50% visible on the page the video will play, and pause when not 50%</div>
-        <div style={{ height: '50vh' }} />
-        <video
-          ref={videoRef}
-          style={{ width: '40%' }}
-          poster="https://s3.amazonaws.com/www.invisionapp.com/images/poster.jpg"
-          src="https://s3.amazonaws.com/www.invisionapp.com-studio/689bcee4dbc4cb806445e0dbc87154aa607dff6d/static/video/dsm-repo.mp4"
-          playsInline
-          muted
-          loop
-          controls={false}
-          preload="none"
-        />
+          <div style={{ height: '150vh' }} />
+        </div>
+      )
+    },
+    {
+      notes: { markdown: notes },
+    },
+  )
+  .add(
+    'whenVisible: "80%"',
+    () => {
+      // init ref
+      const videoRef = React.useRef(null)
 
-        <div style={{ height: '150vh' }} />
-      </div>
-    )
-  },
-  {
-    notes: { markdown: notes },
-  },
-)
-.add(
-  'whenVisible: "80%"',
-  () => {
-    // init ref
-    const videoRef = React.useRef(null)
+      React.useEffect(() => {
+        const { current: videoElement } = videoRef
 
-    React.useEffect(() => {
-      const { current: videoElement } = videoRef
+        if (!videoElement) {
+          return undefined
+        }
 
-      if (!videoElement) {
-        return undefined
-      }
+        const scrollObserver = new ScrollObserver({
+          triggerElement: videoElement,
+          video: {
+            element: videoElement,
+          },
+          whenVisible: '80%',
+        })
 
-      const scrollObserver = new ScrollObserver({
-        triggerElement: videoElement,
-        video: {
-          element: videoElement,
-        },
-        whenVisible: '80%',
+        return () => {
+          scrollObserver.destroy()
+        }
       })
 
-      return () => {
-        scrollObserver.destroy()
-      }
-    })
+      return (
+        <div className="bg-lightgrey transition">
+          <div style={{ height: '50vh' }} />
 
-    return (
-      <div className="bg-lightgrey transition">
-        <div style={{ height: '50vh' }} />
+          <h3>whenVisible: '80%'</h3>
+          <h1>Scroll Down</h1>
 
-        <h3>whenVisible: '80%'</h3>
-        <h1>Scroll Down</h1>
+          <div style={{ height: '150vh' }} />
 
-        <div style={{ height: '150vh' }} />
+          <div>While the video is 80% visible on the page the video will play, and pause when not 80%</div>
+          <div style={{ height: '50vh' }} />
+          <video
+            ref={videoRef}
+            style={{ width: '40%' }}
+            poster="https://s3.amazonaws.com/www.invisionapp.com/images/poster.jpg"
+            src="https://s3.amazonaws.com/www.invisionapp.com-studio/689bcee4dbc4cb806445e0dbc87154aa607dff6d/static/video/dsm-repo.mp4"
+            playsInline
+            muted
+            loop
+            controls={false}
+            preload="none"
+          />
 
-        <div>While the video is 80% visible on the page the video will play, and pause when not 80%</div>
-        <div style={{ height: '50vh' }} />
-        <video
-          ref={videoRef}
-          style={{ width: '40%' }}
-          poster="https://s3.amazonaws.com/www.invisionapp.com/images/poster.jpg"
-          src="https://s3.amazonaws.com/www.invisionapp.com-studio/689bcee4dbc4cb806445e0dbc87154aa607dff6d/static/video/dsm-repo.mp4"
-          playsInline
-          muted
-          loop
-          controls={false}
-          preload="none"
-        />
-
-        <div style={{ height: '150vh' }} />
-      </div>
-    )
-  },
-  {
-    notes: { markdown: notes },
-  },
-)
+          <div style={{ height: '150vh' }} />
+        </div>
+      )
+    },
+    {
+      notes: { markdown: notes },
+    },
+  )
 
 storiesOf('ScrollObserver|callback', module)
   .add(
@@ -1077,7 +1135,7 @@ storiesOf('ScrollObserver|callback', module)
             active: () => console.log('active'),
             notActive: () => console.log('notActive'),
           }`}</h3>
-          
+
           <h1>Scroll Down</h1>
 
           <div style={{ height: '150vh' }} />
@@ -1194,7 +1252,8 @@ storiesOf('ScrollObserver|callback', module)
     {
       notes: { markdown: notes },
     },
-  ).add(
+  )
+  .add(
     'multiple triggers',
     () => {
       // init ref
@@ -1216,7 +1275,7 @@ storiesOf('ScrollObserver|callback', module)
             notActive: () => console.log('trigger 1 notActive'),
           },
         })
-        
+
         const scrollObserver2 = new ScrollObserver({
           triggerElement: triggerElement2,
           callback: {
@@ -1236,7 +1295,7 @@ storiesOf('ScrollObserver|callback', module)
           <div style={{ height: '50vh' }} />
 
           <h3>multiple triggers</h3>
-          
+
           <h1>Scroll Down</h1>
 
           <div style={{ height: '150vh' }} />
