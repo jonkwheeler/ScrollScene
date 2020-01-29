@@ -20,6 +20,12 @@ or
 npm install scrollscene scrollmagic
 ```
 
+If plan to use only the ScrollObserver, currently you can
+```js
+yarn add scrollscene && yarn add -D scrollmagic
+```
+to avoid import errors.
+
 ## Import
 
 ### ScrollScene (uses ScrollMagic)
@@ -87,13 +93,17 @@ See below for examples.
 
 - This project sought out to overcome the issues of using Gsap3 with ScrollMagic, as well as ESM related problems. In the end it added more features, like video playback, scene init breakpoints, scene duration breakpoints, gsap speed controls, and using an IntersectionObserver when it fits your usecase better.
 - Is written in TypeScript so you have access to the types.
-- This does not include `gsap` or `scrollmagic`. If you plan to use them, you'll need to install them in addition to `scrollscene`.
+- This does not include `gsap` or `scrollmagic`. If you plan to use them, you'll need to install them in addition to `scrollscene`. If you don't plan to use ScrollScene, you currently still have to install `scrollmagic`, but can so as a dev dependency. `yarn add -D scrollmagic`,
 - This works with Gsap without having to import the extra `animation.gsap.js` file from ScrollMagic (though you'll have to install in yourself `yarn add gsap` or `npm install gsap`). In turn this is smaller than using ScrollMagic and animation.gsap.js.
 - It allows for scene init breakpoints, and for scene duration breakpoints. This will also will on SSR if implemented correctly.
 - You do not need to create a ScrollMagic controller. It is done for you.
 - This will Tree Shake if your webpack is set up correctly. Next.js, for example, does this for you. Thus you can just `ScrollObserver` and not `ScrollScene` if you wanted and your build should exclude `ScrollScene` and `scrollmagic` (as long as you did import them).
 - Does not work with `jQuery`. You need to provide a domNodeSelector. Whether a `document.querySelector('#element')` or React ref `myRef.current`.
 - You can add all the methods from ScrollMagic.Scene directly onto the `scrollScene`. See options here http://scrollmagic.io/docs/ScrollMagic.Scene.html. You can do a `setPin`, or `on` event handler. 
+
+## Next Steps
+
+- Add native setPin functionality using ScrollObserver to deprecate using it with ScrollMagic.
 
 ## Usage
 
