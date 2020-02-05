@@ -224,11 +224,11 @@ interface IScrollScene {
   /**
    * triggerElement
    * @desc Set the element you wish to trigger events based upon, the observed element.
-   * @type  HTMLElement | React.ReactNode | any
+   * @type  HTMLElement | any
    * @example
    * triggerElement: triggerRef.current
    */
-  triggerElement: HTMLElement | React.ReactNode | any
+  triggerElement: HTMLElement | any
 
   /**
    * triggerHook

@@ -247,22 +247,22 @@ export interface IScrollObserverToggle {
   /**
    * element
    * @desc Specify the element you wish to toggle the className on.
-   * @type HTMLElement | React.ReactNode | any
+   * @type HTMLElement | any
    * @example
    * toggle: { element: containerRef.current }
    */
-  element: HTMLElement | React.ReactNode | any
+  element: HTMLElement | any
 }
 
 export interface IScrollObserverVideo {
   /**
    * element
    * @desc Specify the video element you wish to interact with.
-   * @type HTMLElement | React.ReactNode | any
+   * @type HTMLElement | any
    * @example
    * video: { element: videoRef.current }
    */
-  element: HTMLElement | React.ReactNode | any
+  element: HTMLElement | any
 }
 
 interface IScrollObserver {
@@ -346,11 +346,11 @@ interface IScrollObserver {
   /**
    * triggerElement
    * @desc Set the element you wish to trigger events based upon, the observed element.
-   * @type HTMLElement | React.ReactNode | any
+   * @type HTMLElement | any
    * @example
    * triggerElement: triggerRef.current
    */
-  triggerElement: HTMLElement | React.ReactNode | any
+  triggerElement: HTMLElement | any
 
   /**
    * useDuration
