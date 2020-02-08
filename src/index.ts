@@ -1,6 +1,9 @@
 export { ScrollScene } from './ScrollScene'
 export { ScrollObserver } from './ScrollObserver'
 
-import ScrollMagic from './scrollmagic-with-ssr'
-export { ScrollMagic }
-export { ScrollMagic as ScrollMagicSsr }
+import scrollmagic from './scrollmagic-with-ssr'
+export { scrollmagic as ScrollMagic }
+export { scrollmagic as ScrollMagicSsr }
+
+import addindicators from './scrollmagic-add-indicators'
+export { addindicators as addIndicators }

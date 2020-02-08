@@ -3,6 +3,7 @@ import { storiesOf } from '@storybook/react'
 import { ScrollScene } from '../ScrollScene'
 import { ScrollObserver } from '../ScrollObserver'
 import { gsap } from 'gsap'
+import { addIndicators } from '../index'
 
 import notes from '../../README.md'
 
@@ -30,6 +31,8 @@ storiesOf('ScrollScene|toggle (className)', module)
           },
           triggerHook: 0,
         })
+
+        scrollScene.Scene.addIndicators({ name: 'pin scene', colorEnd: '#FFFFFF' })
 
         return () => {
           scrollScene.destroy()
@@ -78,6 +81,8 @@ storiesOf('ScrollScene|toggle (className)', module)
           },
           triggerHook: 0.5,
         })
+
+        scrollScene.Scene.addIndicators({ name: 'pin scene', colorEnd: '#FFFFFF' })
 
         return () => {
           scrollScene.destroy()
