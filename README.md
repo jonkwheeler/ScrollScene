@@ -105,6 +105,7 @@ See below for examples.
 
 - Add native setPin functionality using ScrollObserver to deprecate using it with ScrollMagic.
 - Add out-of-the-box split text animations, svg line draw, etc...
+- Move ScrollObserver to a separate package.
 
 ## Usage
 
