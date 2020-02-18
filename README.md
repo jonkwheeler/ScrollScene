@@ -365,7 +365,7 @@ scrollScene.Controller({ addIndicators: true });
 #### Toggle a className while element is visible on the page
 
 ```js
-import { ScrollScene } from 'scrollscene'
+import { ScrollObserver } from 'scrollscene'
 import { gsap } from 'gsap'
 
 const scrollObserver = new ScrollObserver({
@@ -380,7 +380,7 @@ const scrollObserver = new ScrollObserver({
 #### Toggle a Gsap animation while element is visible on the page
 
 ```js
-import { ScrollScene } from 'scrollscene'
+import { ScrollObserver } from 'scrollscene'
 import { gsap } from 'gsap'
 
 // create a timeline and add a tween
@@ -403,7 +403,7 @@ const scrollObserver = new ScrollObserver({
 #### Toggle a Gsap animation while element is visible on the page with a yoyo effect and repeat delay of 0
 
 ```js
-import { ScrollScene } from 'scrollscene'
+import { ScrollObserver } from 'scrollscene'
 import { gsap } from 'gsap'
 
 // create a timeline and add a tween
