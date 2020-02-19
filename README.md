@@ -126,6 +126,9 @@ const scrollScene = new ScrollScene({
 ```js
 import { ScrollScene } from 'scrollscene'
 
+const domNode = document.querySelector('#element')
+const anotherDomNode = document.querySelector('#element2')
+
 const scrollScene = new ScrollScene({
   triggerElement: domNode,
   toggle: {
@@ -139,6 +142,9 @@ const scrollScene = new ScrollScene({
 
 ```js
 import { ScrollScene } from 'scrollscene'
+
+const domNode = document.querySelector('#element')
+const anotherDomNode = document.querySelector('#element2')
 
 const scrollScene = new ScrollScene({
   triggerElement: domNode,
@@ -157,6 +163,9 @@ const scrollScene = new ScrollScene({
 ```js
 import { ScrollScene } from 'scrollscene'
 
+const domNode = document.querySelector('#element')
+const anotherDomNode = document.querySelector('#element2')
+
 const scrollScene = new ScrollScene({
   triggerElement: domNode,
   toggle: {
@@ -172,6 +181,9 @@ or anything from [new ScrollMagic.Scene(options)](http://scrollmagic.io/docs/Scr
 
 ```js
 import { ScrollScene } from 'scrollscene'
+
+const domNode = document.querySelector('#element')
+const anotherDomNode = document.querySelector('#element2')
 
 const scrollScene = new ScrollScene({
   triggerElement: domNode,
@@ -191,6 +203,9 @@ Same for [new ScrollMagic.Controller(options)](http://scrollmagic.io/docs/Scroll
 ```js
 import { ScrollScene } from 'scrollscene'
 
+const domNode = document.querySelector('#element')
+const anotherDomNode = document.querySelector('#element2')
+
 const scrollScene = new ScrollScene({
   triggerElement: domNode,
   toggle: {
@@ -208,6 +223,9 @@ Use a new local controller
 ```js
 import { ScrollScene } from 'scrollscene'
 
+const domNode = document.querySelector('#element')
+const anotherDomNode = document.querySelector('#element2')
+
 const scrollScene = new ScrollScene({
   triggerElement: domNode,
   toggle: {
@@ -223,6 +241,8 @@ Add event handlers (`on`) or `setPin`. See options here http://scrollmagic.io/do
 ```js
 import { ScrollScene } from 'scrollscene'
 
+const domNode = document.querySelector('#element')
+
 const scrollScene = new ScrollScene({
   triggerElement: domNode,
 })
@@ -234,6 +254,8 @@ Add methods to the controller. See options here http://scrollmagic.io/docs/Scrol
 
 ```js
 import { ScrollScene } from 'scrollscene'
+
+const domNode = document.querySelector('#element')
 
 const scrollScene = new ScrollScene({
   triggerElement: domNode,
@@ -250,6 +272,7 @@ import { gsap } from 'gsap'
 
 // create a timeline and add a tween
 const myTimeline = gsap.timeline({ paused: true })
+const domNode = document.querySelector('#element')
 
 myTimeline.to(domNode, {
   x: -200,
@@ -273,6 +296,7 @@ import { gsap } from 'gsap'
 
 // create a timeline and add a tween
 const myTimeline = gsap.timeline({ paused: true })
+const domNode = document.querySelector('#element')
 
 myTimeline.to(domNode, {
   x: -200,
@@ -297,6 +321,7 @@ import { gsap } from 'gsap'
 
 // create a timeline and add a tween
 const myTimeline = gsap.timeline({ paused: true })
+const domNode = document.querySelector('#element')
 
 myTimeline.to(domNode, {
   x: -200,
@@ -319,6 +344,9 @@ I added to this package a modified version of the addIndicators plugin. It's eas
 
 ```js
 import { ScrollScene, addIndicators } from 'scrollscene'
+
+const domNode = document.querySelector('#element')
+const anotherDomNode = document.querySelector('#element2')
 
 const scrollScene = new ScrollScene({
   triggerElement: domNode,
@@ -368,6 +396,9 @@ scrollScene.Controller({ addIndicators: true });
 import { ScrollObserver } from 'scrollscene'
 import { gsap } from 'gsap'
 
+const domNode = document.querySelector('#element')
+const anotherDomNode = document.querySelector('#element2')
+
 const scrollObserver = new ScrollObserver({
   triggerElement: domNode,
   toggle: {
@@ -385,6 +416,8 @@ import { gsap } from 'gsap'
 
 // create a timeline and add a tween
 const tl = gsap.timeline({ paused: true })
+const domNode = document.querySelector('#element')
+const squareElement = document.querySelector('#square')
 
 tl.to(squareElement, {
   x: -200,
@@ -408,6 +441,8 @@ import { gsap } from 'gsap'
 
 // create a timeline and add a tween
 const tl = gsap.timeline({ paused: true })
+const domNode = document.querySelector('#element')
+const squareElement = document.querySelector('#square')
 
 tl.to(squareElement, {
   x: -200,
@@ -433,6 +468,8 @@ import { gsap } from 'gsap'
 
 // create a timeline and add a tween
 const tl = gsap.timeline({ paused: true })
+const domNode = document.querySelector('#element')
+const squareElement = document.querySelector('#square')
 
 tl.to(squareElement, {
   x: -200,
@@ -454,6 +491,9 @@ const scrollObserver = new ScrollObserver({
 ```js
 import { ScrollObserver } from 'scrollscene'
 
+const domNode = document.querySelector('#element')
+const videoTagDomNode = document.querySelector('#video')
+
 const scrollObserver = new ScrollObserver({
   triggerElement: domNode,
   video: {
@@ -468,6 +508,8 @@ const scrollObserver = new ScrollObserver({
 ```js
 import { ScrollObserver } from 'scrollscene'
 
+const domNode = document.querySelector('#element')
+
 const scrollObserver = new ScrollObserver({
   triggerElement: domNode,
   destroyImmediately: true
@@ -478,6 +520,8 @@ const scrollObserver = new ScrollObserver({
 
 ```js
 import { ScrollObserver } from 'scrollscene'
+
+const domNode = document.querySelector('#element')
 
 const scrollObserver = new ScrollObserver({
   triggerElement: domNode,
@@ -492,6 +536,8 @@ The below would create an array of 100 thresholds ([0, 0.1, 0.2, ... 0.98, 0.99,
 ```js
 import { ScrollObserver } from 'scrollscene'
 
+const domNode = document.querySelector('#element')
+
 const scrollObserver = new ScrollObserver({
   triggerElement: domNode,
   thresholds: 100,
@@ -505,6 +551,8 @@ The below adds extra options to the IntersectionObserver. See others properities
 ```js
 import { ScrollObserver } from 'scrollscene'
 
+const domNode = document.querySelector('#element')
+
 const scrollObserver = new ScrollObserver({
   triggerElement: domNode,
   observer: { rootMargin: '-50% 0%' },
@@ -515,6 +563,8 @@ or
 
 ```js
 import { ScrollObserver } from 'scrollscene'
+
+const domNode = document.querySelector('#element')
 
 const scrollObserver = new ScrollObserver({
   triggerElement: domNode,
