@@ -3,4 +3,5 @@ var addindicators = undefined
 if (detect()) {
   addindicators = require('./plugins/debug.addIndicators')
 }
-exports = module.exports = addindicators
+
+export default addindicators

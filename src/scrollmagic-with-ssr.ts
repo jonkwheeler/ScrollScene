@@ -4,4 +4,5 @@ var scrollmagic = undefined
 if (detect()) {
   scrollmagic = require('scrollmagic')
 }
-exports = module.exports = scrollmagic
+
+export default scrollmagic

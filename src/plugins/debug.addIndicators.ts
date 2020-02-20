@@ -10,6 +10,7 @@ import ScrollMagic from '../scrollmagic-with-ssr'
 var NAMESPACE = 'debug.addIndicators'
 
 var console = window.console || {},
+  //@ts-ignore
   err = Function.prototype.bind.call(console.error || console.log || function() {}, console)
 if (!ScrollMagic) {
   err(
@@ -31,7 +32,7 @@ var _util = ScrollMagic._util,
 ScrollMagic.Scene.extend(function() {
   var Scene = this,
     _indicator
-
+  //@ts-ignore
   var log = function() {
     if (Scene._log) {
       // not available, when main source minified
@@ -149,6 +150,7 @@ ScrollMagic.Controller.extend(function() {
     }
   }
   if (Controller._indicators) {
+    //@ts-ignore
     log(2, "WARNING: Scene already has a property '_indicators', which will be overwritten by plugin.")
   }
 
@@ -165,11 +167,13 @@ ScrollMagic.Controller.extend(function() {
 
   // event handler for when associated bounds markers need to be repositioned
   var handleBoundsPositionChange = function() {
+    //@ts-ignore
     _indicators.updateBoundsPositions()
   }
 
   // event handler for when associated trigger groups need to be repositioned
   var handleTriggerPositionChange = function() {
+    //@ts-ignore
     _indicators.updateTriggerGroupPositions()
   }
 
@@ -264,6 +268,7 @@ ScrollMagic.Controller.extend(function() {
       elem.textContent = text
       if (_vertical) {
         // bounds position is dependent on text length, so update
+        //@ts-ignore
         _indicators.updateBoundsPositions()
       }
     }
@@ -359,7 +364,7 @@ var Indicator = function(Scene, options) {
       // do after all execution is finished otherwise sometimes size calculations are off
       _ctrl._indicators.updateBoundsPositions(Indicator)
     }, 0)
-
+    //@ts-ignore
     log(3, 'added indicators')
   }
 
@@ -382,7 +387,7 @@ var Indicator = function(Scene, options) {
         removeTriggerGroup()
       }
       removeBounds()
-
+      //@ts-ignore
       log(3, 'removed indicators')
     }
   }
