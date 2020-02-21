@@ -273,6 +273,7 @@ import { gsap } from 'gsap'
 // create a timeline and add a tween
 const myTimeline = gsap.timeline({ paused: true })
 const domNode = document.querySelector('#element')
+const scrollTrigger = document.querySelector('.scroll-trigger-01')
 
 myTimeline.to(domNode, {
   x: -200,
@@ -281,7 +282,7 @@ myTimeline.to(domNode, {
 })
 
 const scrollScene = new ScrollScene({
-  triggerElement: domNode,
+  triggerElement: scrollTrigger,
   gsap: {
     timeline: myTimeline,
   },
@@ -297,6 +298,7 @@ import { gsap } from 'gsap'
 // create a timeline and add a tween
 const myTimeline = gsap.timeline({ paused: true })
 const domNode = document.querySelector('#element')
+const scrollTrigger = document.querySelector('.scroll-trigger-01')
 
 myTimeline.to(domNode, {
   x: -200,
@@ -305,7 +307,7 @@ myTimeline.to(domNode, {
 })
 
 const scrollScene = new ScrollScene({
-  triggerElement,
+  triggerElement: scrollTrigger,
   gsap: {
     timeline: tl,
     reverseSpeed: 4,
@@ -322,6 +324,7 @@ import { gsap } from 'gsap'
 // create a timeline and add a tween
 const myTimeline = gsap.timeline({ paused: true })
 const domNode = document.querySelector('#element')
+const scrollTrigger = document.querySelector('.scroll-trigger-01')
 
 myTimeline.to(domNode, {
   x: -200,
@@ -330,7 +333,7 @@ myTimeline.to(domNode, {
 })
 
 const scrollScene = new ScrollScene({
-  triggerElement,
+  triggerElement: scrollTrigger,
   gsap: {
     timeline: tl,
   },
