@@ -1,7 +1,7 @@
 {
   "name": "scrollscene",
   "title": "ScrollScene",
-  "version": "0.0.14",
+  "version": "0.0.15",
   "description": "ScrollScene is an extra layer on top of ScrollMagic as well as using IntersectionObserver to achieve similar effects.",
   "author": "Jon K. Wheeler",
   "license": "MIT",
