@@ -1323,3 +1323,79 @@ storiesOf('ScrollObserver|callback', module)
       notes: { markdown: notes },
     },
   )
+
+storiesOf('ScrollObserver|multiple events', module).add(
+  'toggle + video + callback',
+  () => {
+    // init ref
+    const triggerRef = React.useRef(null)
+    const containerRef = React.useRef(null)
+    const videoRef = React.useRef(null)
+
+    React.useEffect(() => {
+      const { current: triggerElement } = triggerRef
+      const { current: containerElement } = containerRef
+      const { current: videoElement } = videoRef
+
+      if (!triggerElement) {
+        return undefined
+      }
+
+      const scrollObserver = new ScrollObserver({
+        triggerElement,
+        toggle: {
+          element: containerElement,
+          className: 'turn-blue',
+        },
+        callback: {
+          active: () => console.log('active'),
+          notActive: () => console.log('notActive'),
+        },
+        video: {
+          element: videoElement,
+        },
+      })
+
+      return () => {
+        scrollObserver.destroy()
+      }
+    })
+
+    return (
+      <div className="bg-lightgrey transition" ref={containerRef}>
+        <div style={{ height: '50vh' }} />
+
+        <h3>{`callback: {
+            active: () => console.log('active'),
+            notActive: () => console.log('notActive'),
+          }`}</h3>
+
+        <h1>Scroll Down</h1>
+
+        <div style={{ height: '150vh' }} />
+
+        <div ref={triggerRef}>
+          While this is visible on the page, the console.log("active") will fire, and while it's not,
+          console.log("notActive") will fire
+        </div>
+        <video
+          ref={videoRef}
+          style={{ width: '40%' }}
+          poster="https://s3.amazonaws.com/www.invisionapp.com/images/poster.jpg"
+          src="https://s3.amazonaws.com/www.invisionapp.com-studio/689bcee4dbc4cb806445e0dbc87154aa607dff6d/static/video/dsm-repo.mp4"
+          playsInline
+          muted
+          loop
+          controls={false}
+          preload="none"
+        />
+        <div style={{ height: '50vh' }} />
+
+        <div style={{ height: '150vh' }} />
+      </div>
+    )
+  },
+  {
+    notes: { markdown: notes },
+  },
+)

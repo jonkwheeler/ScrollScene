@@ -42,12 +42,10 @@ const setClassName = function(this: any, options) {
   this.update = function(setState) {
     if (!setState.alreadyFired && setState.visible) {
       this.add()
-      setState.alreadyFired = true
     }
 
     if (setState.alreadyFired && !setState.visible) {
       this.remove()
-      setState.alreadyFired = false
     }
   }
 }
@@ -99,12 +97,10 @@ const setTween = function(this: any, options) {
   this.update = function(setState) {
     if (!setState.alreadyFired && setState.visible) {
       this.play()
-      setState.alreadyFired = true
     }
 
     if (setState.alreadyFired && !setState.visible) {
       gsap.yoyo ? this.pause() : this.reverse()
-      setState.alreadyFired = false
     }
   }
 
@@ -141,12 +137,10 @@ const setPlayer = function(this: any, options) {
   this.update = function(setState) {
     if (!setState.alreadyFired && setState.visible) {
       this.play()
-      setState.alreadyFired = true
     }
 
     if (setState.alreadyFired && !setState.visible) {
       this.pause()
-      setState.alreadyFired = false
     }
   }
 }
@@ -172,12 +166,10 @@ const setFunction: any = function(this: any, options) {
   this.update = function(setState) {
     if (!setState.alreadyFired && setState.visible && callback.active) {
       callback.active()
-      setState.alreadyFired = true
     }
 
     if (setState.alreadyFired && !setState.visible && callback.active) {
       callback.notActive()
-      setState.alreadyFired = false
     }
   }
 }
@@ -422,6 +414,8 @@ const ScrollObserver = function(
   }
 
   if (toggle && isObject(toggle)) {
+    console.log('toggle active')
+
     setToggle = new setClassName(toggle)
   }
 
@@ -433,7 +427,8 @@ const ScrollObserver = function(
     setVideo = new setPlayer(video)
   }
 
-  if (callback) {
+  if (callback && isObject(callback)) {
+    console.log('callback active')
     setCallback = new setFunction(callback)
   }
 
@@ -458,6 +453,17 @@ const ScrollObserver = function(
       setGsap && (!useDuration ? setGsap.update(setState) : setGsap.scrub(intersectionRatio))
       setVideo && setVideo.update(setState)
       setCallback && setCallback.update(setState)
+
+      /*
+       * To help with ignoring refiring extra function
+       */
+      if (!setState.alreadyFired && setState.visible) {
+        setState.alreadyFired = true
+      }
+
+      if (setState.alreadyFired && !setState.visible) {
+        setState.alreadyFired = false
+      }
 
       if (isIntersecting && destroyImmediately) {
         /*
