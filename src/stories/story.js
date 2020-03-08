@@ -216,6 +216,66 @@ storiesOf('ScrollScene|toggle (className)', module)
       notes: { markdown: notes },
     },
   )
+  .add(
+    'offset: 100, triggerHook: 0.5',
+    () => {
+      // init ref
+      const containerRef = React.useRef(null)
+      const triggerRef = React.useRef(null)
+
+      React.useEffect(() => {
+        const { current: containerElement } = containerRef
+        const { current: triggerElement } = triggerRef
+
+        if (!containerElement && !triggerElement) {
+          return undefined
+        }
+
+        const scrollScene = new ScrollScene({
+          controller: {
+            loglevel: 3,
+          },
+          triggerElement: triggerElement,
+          toggle: {
+            element: containerElement,
+            className: 'turn-blue',
+          },
+          offset: 100,
+          triggerHook: 0.5,
+        })
+
+        scrollScene.Scene.addIndicators({ name: 'pin scene', colorEnd: '#FFFFFF' })
+
+        return () => {
+          scrollScene.destroy()
+        }
+      })
+
+      return (
+        <div className="bg-lightgrey transition" ref={containerRef}>
+          <div style={{ height: '50vh' }} />
+
+          <h3>offset: 100, triggerHook: 0.5</h3>
+          <h1>Scroll Down</h1>
+
+          <div style={{ height: '150vh' }} />
+
+          <div ref={triggerRef}>When this hits the middle of the page plus 100 pixels, the page with turn blue.</div>
+
+          <div style={{ height: '100px' }} />
+
+          <div>offset: 100, triggerHook: 0.5,</div>
+
+          <div style={{ height: '100vh' }} />
+
+          <div style={{ height: '150vh' }} />
+        </div>
+      )
+    },
+    {
+      notes: { markdown: notes },
+    },
+  )
 
 storiesOf('ScrollScene|events', module)
   .add(
