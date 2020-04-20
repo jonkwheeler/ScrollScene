@@ -261,7 +261,7 @@ const ScrollScene = function(
     controller = {},
     duration,
     gsap,
-    offset = 0,
+    offset,
     scene = {},
     toggle,
     triggerElement,
@@ -283,10 +283,10 @@ const ScrollScene = function(
 
   const controllerIsUse = localController ? localController : globalController
 
-  if (!triggerElement) {
+  if (!triggerElement && offset === undefined) {
     errorLog(
       nameSpace,
-      `Be sure to set a const triggerElement = (reactRef.current or document.querySelector) in the new ${nameSpace}({ triggerElement: triggerElement })`,
+      `Be sure to set a const triggerElement = (reactRef.current or document.querySelector) in the new ${nameSpace}({ triggerElement: triggerElement }) or set an offset.`,
     )
   }
 
