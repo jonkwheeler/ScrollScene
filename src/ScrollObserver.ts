@@ -414,8 +414,6 @@ const ScrollObserver = function(
   }
 
   if (toggle && isObject(toggle)) {
-    console.log('toggle active')
-
     setToggle = new setClassName(toggle)
   }
 
