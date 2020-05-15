@@ -21,9 +21,11 @@ npm install scrollscene scrollmagic
 ```
 
 If plan to use only the ScrollObserver, currently you can
+
 ```js
 yarn add scrollscene && yarn add -D scrollmagic
 ```
+
 to avoid import errors.
 
 ## Import
@@ -62,12 +64,12 @@ import { ScrollMagicSsr } from 'scrollscene'
 | ---------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `breakpoints`    | `breakpoints: { 0: false, 768: true }` is used to set responsiveness of the new ScrollMagic.Scene, mobile-first.                                                                                                                                                                                                                                                                                            |
 | `controller`     | `controller: { vertical: false }`. Add anything from [new ScrollMagic.Controller(options)](http://scrollmagic.io/docs/ScrollMagic.Controller.html#constructor).                                                                                                                                                                                                                                             |
-| `duration`       | `duration: '100%'` OR `duration: { 0: '50%', 768: '100% }` is used to set responsiveness of the new ScrollMagic.Scene, mobile-first.                                                                                                                                                                                                                                                                        |
+| `duration`       | `duration: '100%'` OR `duration: { 0: '50%', 768: '100% }` is used to set responsiveness of the new ScrollMagic.Scene, mobile-first. OR set as a dom node (HTMLElement) `duration: triggerElement` and the scene will last as long as the height of the element.                                                                                                                                            |
 | `gsap`           | Init a Gsap timeline with `gsap: { timeline: myTimeline, reverseSpeed: 2, yoyo: true, delay: 2 }`.                                                                                                                                                                                                                                                                                                          |
 | `offset`         | Used to change the ScrollMagic `offset`.                                                                                                                                                                                                                                                                                                                                                                    |
 | `scene`          | `scene: { loglevel: 1 }`. Add anything from [new ScrollMagic.Scene(options)](http://scrollmagic.io/docs/ScrollMagic.Scene.html#constructor).                                                                                                                                                                                                                                                                |
-| `toggle`         | Toggle a className on an element with `toggle: { element: containerRef.current, className: 'lets-do-this' }`. The `element` key does _not_ accept string; eg: `.className`. Use a dom node selector instead.                                                                                                                                                                                                                                                                                               |
-| `triggerElement` | `triggerElement: document.querySelector('#element')` is used to set the element you wish to trigger events based upon. Does _not_ accept string; eg: `.className`. Use a dom node selector instead. Optional: If left blank, will use top of page.                                                                                                                                                                                                                                                                                      |
+| `toggle`         | Toggle a className on an element with `toggle: { element: containerRef.current, className: 'lets-do-this' }`. The `element` key does _not_ accept string; eg: `.className`. Use a dom node selector instead.                                                                                                                                                                                                |
+| `triggerElement` | `triggerElement: document.querySelector('#element')` is used to set the element you wish to trigger events based upon. Does _not_ accept string; eg: `.className`. Use a dom node selector instead. Optional: If left blank, will use top of page.                                                                                                                                                          |
 | `triggerHook`    | Used to change the ScrollMagic `triggerHook`.                                                                                                                                                                                                                                                                                                                                                               |
 | methods          | You can actually apply all the ScrollMagic.Scene methods to `ScrollScene`, like `const scrollScene = new ScrollScene({...}); scrollScene.Scene.on('enter', ())` or `setPin`. See all the options here: http://scrollmagic.io/docs/ScrollMagic.Scene.html. The same goes for ScrollMagic.Controller, `scrollScene.Controller.destroy(true)`, but be careful if you're using the built-in `globalController`. |
 
@@ -80,8 +82,8 @@ import { ScrollMagicSsr } from 'scrollscene'
 | `observer`           | `observer: { rootMargin: '-50% 0%' }` is used to pass extra options to pass the IntersectionObserver, like `root`, `rootMargin`, or `threshold` (to override the thresholds option). `observer: { rootMargin: '0px', threshold: 1.0 }`                                                                                     |
 | `offset`             | Used to change the `rootMargin` easy. `offset: '-10%` will be `rootMargin: '-10% 0%'`. This is a bit wonky and needs more testing.                                                                                                                                                                                         |
 | `thresholds`         | `thresholds: 1` is to set the number of thresholds you want. `thresholds: 100 = [0, 0.1, 0.2, ... 0.98, 0.99, 1]`. It's easy to use `whenVisible`.                                                                                                                                                                         |
-| `toggle`             | Toggle a className on an element with `toggle: { element: containerRef.current, className: 'lets-do-this' }`. The `element` key does _not_ accept string; eg: `.className`. Use a dom node selector instead.                                                                                                                                                                                                              |
-| `triggerElement`     | `triggerElement: document.querySelector('#element')` is used to set the element you wish to trigger events based upon. Does _not_ accept string; eg: `.className`. Use a dom node selector instead.                                                                                                                                                                                                     |
+| `toggle`             | Toggle a className on an element with `toggle: { element: containerRef.current, className: 'lets-do-this' }`. The `element` key does _not_ accept string; eg: `.className`. Use a dom node selector instead.                                                                                                               |
+| `triggerElement`     | `triggerElement: document.querySelector('#element')` is used to set the element you wish to trigger events based upon. Does _not_ accept string; eg: `.className`. Use a dom node selector instead.                                                                                                                        |
 | `useDuration`        | `useDuration: true` to use the percentage of element visibility to scrub the gsap timeline. Similar to ScrollMagic Duration on a Gsap timeline, but not quite the same if the element is longer than the viewport height, thus the element visibility will never reach 100%, thus the gsap timeline will never reach 100%. |
 | `destroyImmediately` | `destroyImmediately: true` to destroy the scene immediately after firing once the element is visible.                                                                                                                                                                                                                      |
 | `whenVisible`        | `whenVisible: '50%'` make the scene active when the triggerElement is visible whatever percentage you set. "50%" means to fire the event when the element is 50% in the viewport. This will override `thresholds`.                                                                                                         |
@@ -99,7 +101,7 @@ See below for examples.
 - You do not need to create a ScrollMagic controller. It is done for you.
 - This will Tree Shake if your webpack is set up correctly. Next.js, for example, does this for you. Thus you can just `ScrollObserver` and not `ScrollScene` if you wanted and your build should exclude `ScrollScene` and `scrollmagic` (as long as you did import them).
 - Does not work with `jQuery`. You need to provide a domNodeSelector. Whether a `document.querySelector('#element')` or React ref `myRef.current`.
-- You can add all the methods from ScrollMagic.Scene directly onto the `scrollScene`. See options here http://scrollmagic.io/docs/ScrollMagic.Scene.html. You can do a `setPin`, or `on` event handler. 
+- You can add all the methods from ScrollMagic.Scene directly onto the `scrollScene`. See options here http://scrollmagic.io/docs/ScrollMagic.Scene.html. You can do a `setPin`, or `on` event handler.
 
 ## Next Steps
 
@@ -195,7 +197,6 @@ const scrollScene = new ScrollScene({
     logLevel: 1,
   },
 })
-
 ```
 
 Same for [new ScrollMagic.Controller(options)](http://scrollmagic.io/docs/ScrollMagic.Controller.html#constructor) under the `controller` key to contain those options.
@@ -236,7 +237,7 @@ const scrollScene = new ScrollScene({
 })
 ```
 
-Add event handlers (`on`) or `setPin`. See options here http://scrollmagic.io/docs/ScrollMagic.Scene.html. 
+Add event handlers (`on`) or `setPin`. See options here http://scrollmagic.io/docs/ScrollMagic.Scene.html.
 
 ```js
 import { ScrollScene } from 'scrollscene'
@@ -247,7 +248,9 @@ const scrollScene = new ScrollScene({
   triggerElement: domNode,
 })
 
-scrollScene.Scene.on('enter', function(event) {console.log('Scene entered.')})
+scrollScene.Scene.on('enter', function(event) {
+  console.log('Scene entered.')
+})
 ```
 
 Add methods to the controller. See options here http://scrollmagic.io/docs/ScrollMagic.Controller.html. But be careful if you're using the built-in `globalController`, as it'll impact all the scenes you have.
@@ -365,7 +368,7 @@ const scrollScene = new ScrollScene({
 scrollScene.Scene.addIndicators({ name: 'pin scene', colorEnd: '#FFFFFF' })
 ```
 
-*Note*: Notice that it's `scrollScene.Scene`. `scrollScene` actually returns `Scene` and `Controller` methods, which you can then modify. `scrollScene.addIndicators` will not work.
+_Note_: Notice that it's `scrollScene.Scene`. `scrollScene` actually returns `Scene` and `Controller` methods, which you can then modify. `scrollScene.addIndicators` will not work.
 
 Alternatively you could do this and it'll apply to the built-in globalController...
 
@@ -374,8 +377,8 @@ import { ScrollScene, addIndicators } from 'scrollscene'
 
 const scrollScene = new ScrollScene({
   controller: {
-    addIndicators: true
-  }
+    addIndicators: true,
+  },
 })
 ```
 
@@ -385,10 +388,10 @@ or
 import { ScrollScene, addIndicators } from 'scrollscene'
 
 const scrollScene = new ScrollScene({
-  ...options
+  ...options,
 })
 
-scrollScene.Controller({ addIndicators: true });
+scrollScene.Controller({ addIndicators: true })
 ```
 
 ### ScrollObserver (uses IntersectionObserver)
@@ -505,7 +508,6 @@ const scrollObserver = new ScrollObserver({
 })
 ```
 
-
 #### Using a scene once
 
 ```js
@@ -515,7 +517,7 @@ const domNode = document.querySelector('#element')
 
 const scrollObserver = new ScrollObserver({
   triggerElement: domNode,
-  destroyImmediately: true
+  destroyImmediately: true,
 })
 ```
 
