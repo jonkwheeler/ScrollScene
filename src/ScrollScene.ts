@@ -45,7 +45,36 @@ const removeTween = function(Tween) {
 }
 
 const setDuration = (Scene, duration) => {
-  if (isObject(duration)) {
+  /* check if duration is set as an HTMLElement */
+  if (duration instanceof HTMLElement) {
+    let previousHeight
+    let currentHeight
+
+    const getHeight = () => duration.offsetHeight
+
+    const update = () => {
+      Scene.duration(getHeight())
+      previousHeight = getHeight()
+    }
+
+    const fn = () => {
+      /* set duration to match height of element */
+      currentHeight = getHeight()
+
+      if (currentHeight !== previousHeight) {
+        update()
+      }
+    }
+
+    fn()
+
+    window.addEventListener('resize', throttle(fn, 700))
+
+    currentHeight = getHeight()
+
+    update()
+  } else if (isObject(duration)) {
+    /* if an object, make breakpoints */
     const keys = Object.keys(duration).reverse()
 
     const fn = () => {
@@ -63,6 +92,7 @@ const setDuration = (Scene, duration) => {
 
     window.addEventListener('resize', throttle(fn, 700))
   } else {
+    /* nothing of the above? just set it */
     Scene.duration(duration)
   }
 }
