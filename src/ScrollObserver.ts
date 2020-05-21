@@ -426,7 +426,6 @@ const ScrollObserver = function(
   }
 
   if (callback && isObject(callback)) {
-    console.log('callback active')
     setCallback = new setFunction(callback)
   }
 
