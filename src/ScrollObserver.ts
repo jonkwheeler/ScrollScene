@@ -123,15 +123,16 @@ const setPlayer = function(this: any, options) {
   }
 
   this.play = function() {
-    video.element.play()
+    /* make sure there's a src set first */
+    video.element.src && video.element.play()
   }
 
   this.pause = function() {
-    video.element.pause()
+    video.element.src && video.element.pause()
   }
 
   this.kill = function() {
-    video.element.pause()
+    video.element.src && video.element.pause()
   }
 
   this.update = function(setState) {
