@@ -1123,6 +1123,8 @@ storiesOf('ScrollObserver|video', module)
           triggerElement: videoElement,
           video: {
             element: videoElement,
+            playingClassName: 'is-playing',
+            pausedClassName: 'is-paused',
           },
           whenVisible: '50%',
         })

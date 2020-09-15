@@ -504,6 +504,8 @@ const scrollObserver = new ScrollObserver({
   triggerElement: domNode,
   video: {
     element: videoTagDomNode,
+    playingClassName: 'is-playing',
+    pausedClassName: 'is-paused',
   },
 })
 ```

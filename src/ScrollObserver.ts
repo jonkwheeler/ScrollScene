@@ -112,6 +112,8 @@ const setTween = function(this: any, options) {
 const setPlayer = function(this: any, options) {
   const video = {
     element: null,
+    playingClassName: 'playing',
+    pausedClassName: 'paused',
     ...options,
   }
 
@@ -122,17 +124,45 @@ const setPlayer = function(this: any, options) {
     )
   }
 
+  function handlePlay() {
+    if (video.element.src) {
+      video.element.play()
+      video.playingClassName && video.element.classList.add(video.playingClassName)
+      video.pausedClassName && video.element.classList.remove(video.pausedClassName)
+    }
+  }
+  function handlePause() {
+    if (video.element.src) {
+      video.element.pause()
+      video.pausedClassName && video.element.classList.add(video.pausedClassName)
+      video.playingClassName && video.element.classList.remove(video.playingClassName)
+    }
+  }
+
+  function tryPlay() {
+    try {
+      handlePlay()
+    } catch (error) {
+      handlePause()
+    }
+  }
+
+  function tryPause() {
+    try {
+      handlePause()
+    } catch (error) {}
+  }
+
   this.play = function() {
-    /* make sure there's a src set first */
-    video.element.src && video.element.play()
+    tryPlay()
   }
 
   this.pause = function() {
-    video.element.src && video.element.pause()
+    tryPause()
   }
 
   this.kill = function() {
-    video.element.src && video.element.pause()
+    tryPause()
   }
 
   this.update = function(setState) {
