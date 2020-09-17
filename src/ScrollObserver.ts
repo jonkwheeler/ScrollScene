@@ -112,8 +112,8 @@ const setTween = function(this: any, options) {
 const setPlayer = function(this: any, options) {
   const video = {
     element: null,
-    playingClassName: 'playing',
-    pausedClassName: 'paused',
+    playingClassName: null,
+    pausedClassName: null,
     ...options,
   }
 
