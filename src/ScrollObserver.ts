@@ -199,7 +199,7 @@ const setFunction: any = function(this: any, options) {
       callback.active()
     }
 
-    if (setState.alreadyFired && !setState.visible && callback.active) {
+    if (setState.alreadyFired && !setState.visible && callback.notActive) {
       callback.notActive()
     }
   }
