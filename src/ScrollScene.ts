@@ -44,40 +44,53 @@ const removeTween = function(Tween) {
   }
 }
 
-const setDuration = (Scene, duration) => {
+const setDuration = function(Scene, duration) {
   /* check if duration is set as an HTMLElement */
   if (duration instanceof HTMLElement) {
     let previousHeight
-    let currentHeight
 
-    const getHeight = () => duration.offsetHeight
-
-    const update = () => {
-      Scene.duration(getHeight())
-      previousHeight = getHeight()
+    const getHeight = function() {
+      return duration.offsetHeight
     }
 
-    const fn = () => {
+    const checkHeight = function() {
       /* set duration to match height of element */
-      currentHeight = getHeight()
+      const currentHeight = getHeight()
 
       if (currentHeight !== previousHeight) {
-        update()
+        /* read once, write once — avoids forcing a second layout */
+        Scene.duration(currentHeight)
+        previousHeight = currentHeight
       }
     }
 
-    fn()
+    checkHeight()
 
-    window.addEventListener('resize', throttle(fn, 700))
+    const ResizeObserverImpl = (window as any).ResizeObserver
 
-    currentHeight = getHeight()
+    if (ResizeObserverImpl) {
+      /* only fires when the element itself resizes, not on every window resize */
+      const resizeObserver = new ResizeObserverImpl(checkHeight)
+      resizeObserver.observe(duration)
 
-    update()
+      return function cleanup() {
+        resizeObserver.disconnect()
+      }
+    }
+
+    const throttledCheckHeight = throttle(checkHeight, 700)
+
+    window.addEventListener('resize', throttledCheckHeight)
+
+    return function cleanup() {
+      throttledCheckHeight.cancel()
+      window.removeEventListener('resize', throttledCheckHeight)
+    }
   } else if (isObject(duration)) {
     /* if an object, make breakpoints */
     const keys = Object.keys(duration).reverse()
 
-    const fn = () => {
+    const fn = function() {
       for (let index = 0; index < keys.length; index++) {
         const breakpoint = parseFloat(keys[index])
 
@@ -90,11 +103,20 @@ const setDuration = (Scene, duration) => {
 
     fn()
 
-    window.addEventListener('resize', throttle(fn, 700))
+    const throttledFn = throttle(fn, 700)
+
+    window.addEventListener('resize', throttledFn)
+
+    return function cleanup() {
+      throttledFn.cancel()
+      window.removeEventListener('resize', throttledFn)
+    }
   } else {
     /* nothing of the above? just set it */
     Scene.duration(duration)
   }
+
+  return undefined
 }
 
 const setClassName = (Scene, options, duration) => {
@@ -327,8 +349,10 @@ const ScrollScene = function(
     ...scene,
   })
 
+  let cleanupDuration
+
   if (duration) {
-    setDuration(Scene, duration)
+    cleanupDuration = setDuration(Scene, duration)
   }
 
   if (toggle && isObject(toggle)) {
@@ -343,14 +367,30 @@ const ScrollScene = function(
     controllerIsUse && Scene.addTo(controllerIsUse)
   }
 
-  this.destroy = function() {
+  /*
+   * breakpoint switching calls this on every resize crossing,
+   * so it must not remove the listeners that watch for the next crossing
+   */
+  const destroyScene = function() {
     Scene.remove()
+  }
+
+  this.destroy = function() {
+    destroyScene()
+
+    if (cleanupDuration) {
+      cleanupDuration()
+    }
+
+    if (cleanupInit) {
+      cleanupInit()
+    }
   }
 
   this.Scene = Scene
   this.Controller = controllerIsUse
 
-  scrollAnimationInit(breakpoints, this.init, this.destroy)
+  const cleanupInit = scrollAnimationInit(breakpoints, this.init, destroyScene)
 }
 
 export { ScrollScene }

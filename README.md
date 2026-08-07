@@ -60,6 +60,12 @@ import { ScrollMagicSsr } from 'scrollscene'
 
 `ScrollMagic` and `ScrollMagicSsr` are the exact same thing.
 
+## Which should you use?
+
+Prefer `ScrollObserver` for most use cases. It runs on IntersectionObserver, so the browser computes visibility off the main thread — no scroll-event tax while the user scrolls — and it doesn't require installing ScrollMagic at all.
+
+Reach for `ScrollScene` when you need ScrollMagic-specific features like `setPin`, a `triggerHook` tied to scroll position, or scrubbing a timeline across a pixel-based `duration`.
+
 ## Options
 
 ### ScrollScene Options (uses ScrollMagic)

@@ -51,8 +51,8 @@
     "portStorybook": "8888"
   },
   "scripts": {
-    "build:commonjs": "pnpm run nuke:commonjs && cross-env BABEL_ENV=commonjs babel $npm_package_config_dirSrc --out-dir $npm_package_config_dirCommonjs --extensions \".ts,.tsx,.js,.jsx\" --ignore \"**/*.stories.js\",\"**/story.js\",\"**/stories\",\"**/*.test.js\",\"test.js\",\"**/test\",\"**/*.md\",\"**/docs\" --source-maps inline",
-    "build:esm": "pnpm run nuke:esm && cross-env BABEL_ENV=esm babel $npm_package_config_dirSrc --out-dir $npm_package_config_dirEsm --extensions \".ts,.tsx,.js,.jsx\" --ignore \"**/*.stories.js\",\"**/story.js\",\"**/stories\",\"**/*.test.js\",\"test.js\",\"**/test\",\"**/*.md\",\"**/docs\" --source-maps inline",
+    "build:commonjs": "pnpm run nuke:commonjs && cross-env BABEL_ENV=commonjs babel $npm_package_config_dirSrc --out-dir $npm_package_config_dirCommonjs --extensions \".ts,.tsx,.js,.jsx\" --ignore \"**/*.stories.js\",\"**/story.js\",\"**/stories\",\"**/*.test.js\",\"test.js\",\"**/test\",\"**/*.md\",\"**/docs\" --source-maps",
+    "build:esm": "pnpm run nuke:esm && cross-env BABEL_ENV=esm babel $npm_package_config_dirSrc --out-dir $npm_package_config_dirEsm --extensions \".ts,.tsx,.js,.jsx\" --ignore \"**/*.stories.js\",\"**/story.js\",\"**/stories\",\"**/*.test.js\",\"test.js\",\"**/test\",\"**/*.md\",\"**/docs\" --source-maps",
     "build:package": "pnpm run build:commonjs && pnpm run build:esm && pnpm run build:types",
     "build:storybook": "build-storybook -s $npm_package_config_dirStorybook -o $npm_package_config_dirStorybookBuild",
     "build:types:commonjs": "tsc --project tsconfig.types.cjs.json && tsconfig-replace-paths --project tsconfig.types.cjs.json",

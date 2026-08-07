@@ -69,6 +69,18 @@ const setTween = function(this: any, options) {
 
   const tl = gsap.timeline
 
+  let scrubFrame
+  let latestRatio = 0
+
+  const applyScrub = function() {
+    scrubFrame = null
+
+    /* skip the write when progress hasn't actually changed */
+    if (tl.progress() !== latestRatio) {
+      tl.progress(latestRatio)
+    }
+  }
+
   if (gsap.yoyo) {
     tl.repeat(-1)
       .yoyo(gsap.yoyo)
@@ -88,6 +100,11 @@ const setTween = function(this: any, options) {
   }
 
   this.kill = function() {
+    if (scrubFrame) {
+      cancelAnimationFrame(scrubFrame)
+      scrubFrame = null
+    }
+
     if (tl) {
       tl.pause(0)
       tl.kill()
@@ -105,7 +122,12 @@ const setTween = function(this: any, options) {
   }
 
   this.scrub = function(intersectionRatio) {
-    tl.progress(intersectionRatio)
+    latestRatio = intersectionRatio
+
+    /* coalesce bursts of observer entries into one write per frame */
+    if (!scrubFrame) {
+      scrubFrame = requestAnimationFrame(applyScrub)
+    }
   }
 }
 
@@ -514,20 +536,15 @@ const ScrollObserver = function(
     return parsed
   }
 
-  const getThresolds = () => {
-    const defaults = {
-      one: [0, 1],
-      gsap: createArray(199),
-    }
-
-    let returnedThresholds: any = defaults.one
+  const getThresolds = function() {
+    let returnedThresholds: any = [0, 1]
 
     if (whenVisible) {
       returnedThresholds = getPercentage(whenVisible)
     }
 
     if (useDuration) {
-      returnedThresholds = defaults.gsap
+      returnedThresholds = createArray(199)
     }
 
     if (thresholds) {
@@ -547,7 +564,11 @@ const ScrollObserver = function(
     Observer.observe(triggerElement)
   }
 
-  this.destroy = function() {
+  /*
+   * breakpoint switching calls this on every resize crossing,
+   * so it must not remove the listener that watches for the next crossing
+   */
+  const destroyObserver = function() {
     if (triggerElement && Observer) {
       if (setToggle) {
         setToggle.remove()
@@ -565,7 +586,15 @@ const ScrollObserver = function(
     }
   }
 
-  scrollAnimationInit(breakpoints, this.init, this.destroy)
+  this.destroy = function() {
+    destroyObserver()
+
+    if (cleanupInit) {
+      cleanupInit()
+    }
+  }
+
+  const cleanupInit = scrollAnimationInit(breakpoints, this.init, destroyObserver)
 }
 
 export { ScrollObserver }
