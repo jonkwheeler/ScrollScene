@@ -24,6 +24,9 @@
     "dist"
   ],
   "sideEffects": false,
+  "engines": {
+    "node": "20.x"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/jonkwheeler/ScrollScene.git"
@@ -49,7 +52,7 @@
     "build:types:commonjs": "tsc --project tsconfig.types.cjs.json && tsconfig-replace-paths --project tsconfig.types.cjs.json",
     "build:types:esm": "tsc --project tsconfig.types.esm.json && tsconfig-replace-paths --project tsconfig.types.esm.json",
     "build:types": "yarn build:types:commonjs && yarn build:types:esm",
-    "build": "yarn build:storybook",
+    "build": "cross-env NODE_OPTIONS=--openssl-legacy-provider yarn build:storybook",
     "dev": "yarn start:storybook",
     "lint": "eslint .",
     "nuke:all:install:dev": "yarn nuke:all && yarn && yarn dev",
@@ -127,5 +130,6 @@
     "scrollscene",
     "gsap",
     "greensock"
-  ]
+  ],
+  "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e"
 }
