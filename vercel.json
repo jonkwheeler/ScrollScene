@@ -1,7 +1,7 @@
 {
-  "buildCommand": "yarn build",
+  "buildCommand": "pnpm build",
   "outputDirectory": "public",
-  "installCommand": "yarn install",
+  "installCommand": "pnpm install",
   "framework": null,
   "build": {
     "env": {

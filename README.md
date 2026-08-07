@@ -11,7 +11,7 @@ View the online [Storybook](https://scrollscene.jonkwheeler.now.sh).
 ## Install
 
 ```js
-yarn add scrollscene scrollmagic
+pnpm add scrollscene scrollmagic
 ```
 
 or
@@ -23,7 +23,7 @@ npm install scrollscene scrollmagic
 If you plan to use only ScrollObserver, install scrollscene alone and import from the observer entry (no ScrollMagic required):
 
 ```js
-yarn add scrollscene
+pnpm add scrollscene
 ```
 
 ```js
@@ -100,7 +100,7 @@ See below for examples.
 - This project sought out to overcome the issues of using Gsap3 with ScrollMagic, as well as ESM related problems. In the end it added more features, like video playback, scene init breakpoints, scene duration breakpoints, gsap speed controls, and using an IntersectionObserver when it fits your usecase better.
 - Is written in TypeScript so you have access to the types.
 - This does not include `gsap` or `scrollmagic`. If you plan to use them, you'll need to install them in addition to `scrollscene`. For ScrollObserver only, use `import { ScrollObserver } from 'scrollscene/observer'` — ScrollMagic is not required.
-- This works with Gsap without having to import the extra `animation.gsap.js` file from ScrollMagic (though you'll have to install in yourself `yarn add gsap` or `npm install gsap`). In turn this is smaller than using ScrollMagic and animation.gsap.js.
+- This works with Gsap without having to import the extra `animation.gsap.js` file from ScrollMagic (though you'll have to install in yourself `pnpm add gsap` or `npm install gsap`). In turn this is smaller than using ScrollMagic and animation.gsap.js.
 - It allows for scene init breakpoints, and for scene duration breakpoints. This will also will on SSR if implemented correctly.
 - You do not need to create a ScrollMagic controller. It is done for you.
 - Import `ScrollObserver` from `scrollscene/observer` to avoid installing ScrollMagic. The main `scrollscene` entry still includes ScrollScene and ScrollMagic exports for backward compatibility.
