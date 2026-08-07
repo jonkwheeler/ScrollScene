@@ -20,13 +20,15 @@ or
 npm install scrollscene scrollmagic
 ```
 
-If plan to use only the ScrollObserver, currently you can
+If you plan to use only ScrollObserver, install scrollscene alone and import from the observer entry (no ScrollMagic required):
 
 ```js
-yarn add scrollscene && yarn add -D scrollmagic
+yarn add scrollscene
 ```
 
-to avoid import errors.
+```js
+import { ScrollObserver } from 'scrollscene/observer'
+```
 
 ## Import
 
@@ -38,8 +40,10 @@ import { ScrollScene } from 'scrollscene'
 
 ### ScrollObserver (uses IntersectionObserver)
 
+Does not require ScrollMagic. Import from the observer entry:
+
 ```js
-import { ScrollObserver } from 'scrollscene'
+import { ScrollObserver } from 'scrollscene/observer'
 ```
 
 ### ScrollMagic (with SSR catch)
@@ -95,11 +99,11 @@ See below for examples.
 
 - This project sought out to overcome the issues of using Gsap3 with ScrollMagic, as well as ESM related problems. In the end it added more features, like video playback, scene init breakpoints, scene duration breakpoints, gsap speed controls, and using an IntersectionObserver when it fits your usecase better.
 - Is written in TypeScript so you have access to the types.
-- This does not include `gsap` or `scrollmagic`. If you plan to use them, you'll need to install them in addition to `scrollscene`. If you don't plan to use ScrollScene, you currently still have to install `scrollmagic`, but can so as a dev dependency. `yarn add -D scrollmagic`,
+- This does not include `gsap` or `scrollmagic`. If you plan to use them, you'll need to install them in addition to `scrollscene`. For ScrollObserver only, use `import { ScrollObserver } from 'scrollscene/observer'` — ScrollMagic is not required.
 - This works with Gsap without having to import the extra `animation.gsap.js` file from ScrollMagic (though you'll have to install in yourself `yarn add gsap` or `npm install gsap`). In turn this is smaller than using ScrollMagic and animation.gsap.js.
 - It allows for scene init breakpoints, and for scene duration breakpoints. This will also will on SSR if implemented correctly.
 - You do not need to create a ScrollMagic controller. It is done for you.
-- This will Tree Shake if your webpack is set up correctly. Next.js, for example, does this for you. Thus you can just `ScrollObserver` and not `ScrollScene` if you wanted and your build should exclude `ScrollScene` and `scrollmagic` (as long as you did import them).
+- Import `ScrollObserver` from `scrollscene/observer` to avoid installing ScrollMagic. The main `scrollscene` entry still includes ScrollScene and ScrollMagic exports for backward compatibility.
 - Does not work with `jQuery`. You need to provide a domNodeSelector. Whether a `document.querySelector('#element')` or React ref `myRef.current`.
 - You can add all the methods from ScrollMagic.Scene directly onto the `scrollScene`. See options here http://scrollmagic.io/docs/ScrollMagic.Scene.html. You can do a `setPin`, or `on` event handler.
 
@@ -399,7 +403,7 @@ scrollScene.Controller({ addIndicators: true })
 #### Toggle a className while element is visible on the page
 
 ```js
-import { ScrollObserver } from 'scrollscene'
+import { ScrollObserver } from 'scrollscene/observer'
 import { gsap } from 'gsap'
 
 const domNode = document.querySelector('#element')
@@ -417,7 +421,7 @@ const scrollObserver = new ScrollObserver({
 #### Toggle a Gsap animation while element is visible on the page
 
 ```js
-import { ScrollObserver } from 'scrollscene'
+import { ScrollObserver } from 'scrollscene/observer'
 import { gsap } from 'gsap'
 
 // create a timeline and add a tween
@@ -442,7 +446,7 @@ const scrollObserver = new ScrollObserver({
 #### Toggle a Gsap animation while element is visible on the page with a yoyo effect and repeat delay of 0
 
 ```js
-import { ScrollObserver } from 'scrollscene'
+import { ScrollObserver } from 'scrollscene/observer'
 import { gsap } from 'gsap'
 
 // create a timeline and add a tween
@@ -469,7 +473,7 @@ const scrollObserver = new ScrollObserver({
 #### Scrub a Gsap timeline based on element visibility
 
 ```js
-import { ScrollObserver } from 'scrollscene'
+import { ScrollObserver } from 'scrollscene/observer'
 import { gsap } from 'gsap'
 
 // create a timeline and add a tween
@@ -495,7 +499,7 @@ const scrollObserver = new ScrollObserver({
 #### Start a video when an element is visible and pause the video when it's not
 
 ```js
-import { ScrollObserver } from 'scrollscene'
+import { ScrollObserver } from 'scrollscene/observer'
 
 const domNode = document.querySelector('#element')
 const videoTagDomNode = document.querySelector('#video')
@@ -513,7 +517,7 @@ const scrollObserver = new ScrollObserver({
 #### Using a scene once
 
 ```js
-import { ScrollObserver } from 'scrollscene'
+import { ScrollObserver } from 'scrollscene/observer'
 
 const domNode = document.querySelector('#element')
 
@@ -526,7 +530,7 @@ const scrollObserver = new ScrollObserver({
 #### Set a percentage for the visibility threshold
 
 ```js
-import { ScrollObserver } from 'scrollscene'
+import { ScrollObserver } from 'scrollscene/observer'
 
 const domNode = document.querySelector('#element')
 
@@ -541,7 +545,7 @@ const scrollObserver = new ScrollObserver({
 The below would create an array of 100 thresholds ([0, 0.1, 0.2, ... 0.98, 0.99, 1]), effectively says any percent from 1 to 100 of the element intersecting the viewport should trigger the scene.
 
 ```js
-import { ScrollObserver } from 'scrollscene'
+import { ScrollObserver } from 'scrollscene/observer'
 
 const domNode = document.querySelector('#element')
 
@@ -556,7 +560,7 @@ const scrollObserver = new ScrollObserver({
 The below adds extra options to the IntersectionObserver. See others properities you could add [here](https://developer.mozilla.org/en-US/docs/Web/API/IntersectionObserver).
 
 ```js
-import { ScrollObserver } from 'scrollscene'
+import { ScrollObserver } from 'scrollscene/observer'
 
 const domNode = document.querySelector('#element')
 
@@ -569,7 +573,7 @@ const scrollObserver = new ScrollObserver({
 or
 
 ```js
-import { ScrollObserver } from 'scrollscene'
+import { ScrollObserver } from 'scrollscene/observer'
 
 const domNode = document.querySelector('#element')
 

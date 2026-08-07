@@ -8,6 +8,18 @@
   "main": "./dist/commonjs/index.js",
   "module": "./dist/esm/index.js",
   "types": "./dist/commonjs/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/esm/index.js",
+      "require": "./dist/commonjs/index.js",
+      "types": "./dist/commonjs/index.d.ts"
+    },
+    "./observer": {
+      "import": "./dist/esm/observer.js",
+      "require": "./dist/commonjs/observer.js",
+      "types": "./dist/commonjs/observer.d.ts"
+    }
+  },
   "files": [
     "dist"
   ],
@@ -99,6 +111,11 @@
   },
   "peerDependencies": {
     "scrollmagic": "^2.0.7"
+  },
+  "peerDependenciesMeta": {
+    "scrollmagic": {
+      "optional": true
+    }
   },
   "bugs": {
     "url": "https://github.com/jonkwheeler/ScrollScene/issues"
