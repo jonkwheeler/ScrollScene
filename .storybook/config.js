@@ -1,5 +1,6 @@
 import { configure, addDecorator } from '@storybook/react'
 import { withKnobs } from '@storybook/addon-knobs'
+import 'normalize.css/normalize.css'
 
 addDecorator(
   withKnobs({

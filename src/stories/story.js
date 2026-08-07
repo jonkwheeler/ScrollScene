@@ -5,6 +5,7 @@ import { ScrollObserver } from '../ScrollObserver'
 import { gsap } from 'gsap'
 import { addIndicators } from '../index'
 import { Stylesheet } from './Stylesheet'
+import DemoVideo from './DemoVideo'
 
 import notes from '../../README.md'
 
@@ -1145,17 +1146,7 @@ storiesOf('ScrollObserver|video', module)
 
           <div>While the video is 50% visible on the page the video will play, and pause when not 50%</div>
           <div style={{ height: '50vh' }} />
-          <video
-            ref={videoRef}
-            style={{ width: '40%' }}
-            poster="https://s3.amazonaws.com/www.invisionapp.com/images/poster.jpg"
-            src="https://s3.amazonaws.com/www.invisionapp.com-studio/689bcee4dbc4cb806445e0dbc87154aa607dff6d/static/video/dsm-repo.mp4"
-            playsInline
-            muted
-            loop
-            controls={false}
-            preload="none"
-          />
+          <DemoVideo ref={videoRef} />
 
           <div style={{ height: '150vh' }} />
         </div>
@@ -1202,17 +1193,7 @@ storiesOf('ScrollObserver|video', module)
 
           <div>While the video is 80% visible on the page the video will play, and pause when not 80%</div>
           <div style={{ height: '50vh' }} />
-          <video
-            ref={videoRef}
-            style={{ width: '40%' }}
-            poster="https://s3.amazonaws.com/www.invisionapp.com/images/poster.jpg"
-            src="https://s3.amazonaws.com/www.invisionapp.com-studio/689bcee4dbc4cb806445e0dbc87154aa607dff6d/static/video/dsm-repo.mp4"
-            playsInline
-            muted
-            loop
-            controls={false}
-            preload="none"
-          />
+          <DemoVideo ref={videoRef} />
 
           <div style={{ height: '150vh' }} />
         </div>
@@ -1496,17 +1477,7 @@ storiesOf('ScrollObserver|multiple events', module).add(
           While this is visible on the page, the console.log("active") will fire, and while it's not,
           console.log("notActive") will fire
         </div>
-        <video
-          ref={videoRef}
-          style={{ width: '40%' }}
-          poster="https://s3.amazonaws.com/www.invisionapp.com/images/poster.jpg"
-          src="https://s3.amazonaws.com/www.invisionapp.com-studio/689bcee4dbc4cb806445e0dbc87154aa607dff6d/static/video/dsm-repo.mp4"
-          playsInline
-          muted
-          loop
-          controls={false}
-          preload="none"
-        />
+        <DemoVideo ref={videoRef} />
         <div style={{ height: '50vh' }} />
 
         <div style={{ height: '150vh' }} />

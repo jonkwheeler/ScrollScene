@@ -8,10 +8,31 @@
   "main": "./dist/commonjs/index.js",
   "module": "./dist/esm/index.js",
   "types": "./dist/commonjs/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/esm/index.js",
+      "require": "./dist/commonjs/index.js",
+      "types": "./dist/commonjs/index.d.ts"
+    },
+    "./observer": {
+      "import": "./dist/esm/observer.js",
+      "require": "./dist/commonjs/observer.js",
+      "types": "./dist/commonjs/observer.d.ts"
+    }
+  },
   "files": [
     "dist"
   ],
   "sideEffects": false,
+  "engines": {
+    "node": "20.x"
+  },
+  "pnpm": {
+    "shamefullyHoist": true,
+    "overrides": {
+      "react-draggable": "4.4.5"
+    }
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/jonkwheeler/ScrollScene.git"
@@ -30,27 +51,27 @@
     "portStorybook": "8888"
   },
   "scripts": {
-    "build:commonjs": "yarn nuke:commonjs && cross-env BABEL_ENV=commonjs babel $npm_package_config_dirSrc --out-dir $npm_package_config_dirCommonjs --extensions \".ts,.tsx,.js,.jsx\" --ignore \"**/*.stories.js\",\"**/story.js\",\"**/stories\",\"**/*.test.js\",\"test.js\",\"**/test\",\"**/*.md\",\"**/docs\" --source-maps inline",
-    "build:esm": "yarn nuke:esm && cross-env BABEL_ENV=esm babel $npm_package_config_dirSrc --out-dir $npm_package_config_dirEsm --extensions \".ts,.tsx,.js,.jsx\" --ignore \"**/*.stories.js\",\"**/story.js\",\"**/stories\",\"**/*.test.js\",\"test.js\",\"**/test\",\"**/*.md\",\"**/docs\" --source-maps inline",
-    "build:package": "yarn build:commonjs && yarn build:esm && yarn build:types",
+    "build:commonjs": "pnpm run nuke:commonjs && cross-env BABEL_ENV=commonjs babel $npm_package_config_dirSrc --out-dir $npm_package_config_dirCommonjs --extensions \".ts,.tsx,.js,.jsx\" --ignore \"**/*.stories.js\",\"**/story.js\",\"**/stories\",\"**/*.test.js\",\"test.js\",\"**/test\",\"**/*.md\",\"**/docs\" --source-maps inline",
+    "build:esm": "pnpm run nuke:esm && cross-env BABEL_ENV=esm babel $npm_package_config_dirSrc --out-dir $npm_package_config_dirEsm --extensions \".ts,.tsx,.js,.jsx\" --ignore \"**/*.stories.js\",\"**/story.js\",\"**/stories\",\"**/*.test.js\",\"test.js\",\"**/test\",\"**/*.md\",\"**/docs\" --source-maps inline",
+    "build:package": "pnpm run build:commonjs && pnpm run build:esm && pnpm run build:types",
     "build:storybook": "build-storybook -s $npm_package_config_dirStorybook -o $npm_package_config_dirStorybookBuild",
     "build:types:commonjs": "tsc --project tsconfig.types.cjs.json && tsconfig-replace-paths --project tsconfig.types.cjs.json",
     "build:types:esm": "tsc --project tsconfig.types.esm.json && tsconfig-replace-paths --project tsconfig.types.esm.json",
-    "build:types": "yarn build:types:commonjs && yarn build:types:esm",
-    "build": "yarn build:storybook",
-    "dev": "yarn start:storybook",
+    "build:types": "pnpm run build:types:commonjs && pnpm run build:types:esm",
+    "build": "cross-env NODE_OPTIONS=--openssl-legacy-provider pnpm run build:storybook",
+    "dev": "pnpm run start:storybook",
     "lint": "eslint .",
-    "nuke:all:install:dev": "yarn nuke:all && yarn && yarn dev",
-    "nuke:all:install": "yarn nuke:all && yarn",
-    "nuke:all": "rm -rf node_modules .cache $npm_package_config_dirBuild yarn.lock yarn-error.log package-lock.json",
-    "nuke:build:rebuild": "yarn nuke:build && yarn build:package",
+    "nuke:all:install:dev": "pnpm run nuke:all && pnpm install && pnpm run dev",
+    "nuke:all:install": "pnpm run nuke:all && pnpm install",
+    "nuke:all": "rm -rf node_modules .cache $npm_package_config_dirBuild pnpm-lock.yaml yarn.lock yarn-error.log package-lock.json",
+    "nuke:build:rebuild": "pnpm run nuke:build && pnpm run build:package",
     "nuke:build": "rm -rf $npm_package_config_dirBuild",
     "nuke:commonjs": "rm -rf $npm_package_config_dirBuild",
     "nuke:esm": "rm -rf $npm_package_config_dirEsm",
-    "prepublishOnly": "yarn nuke:build:rebuild",
-    "release": "yarn release-it",
+    "prepublishOnly": "pnpm run nuke:build:rebuild",
+    "release": "pnpm exec release-it",
     "start:storybook": "start-storybook -p $npm_package_config_portStorybook -c $npm_package_config_dirStorybook",
-    "storybook": "yarn start:storybook"
+    "storybook": "pnpm run start:storybook"
   },
   "dependencies": {
     "@babel/runtime": "^7.8.4",
@@ -71,15 +92,19 @@
     "@storybook/addon-notes": "^5.2.8",
     "@storybook/addon-storysource": "^5.3.6",
     "@storybook/react": "^5.2.8",
+    "@types/node": "^14.18.63",
     "babel-eslint": "^10.0.3",
     "babel-loader": "^8.0.6",
     "babel-plugin-add-react-displayname": "^0.0.5",
+    "babel-plugin-dynamic-import-node": "^2.3.3",
     "babel-plugin-module-resolver": "^4.0.0",
+    "core-js": "^3.37.1",
     "cross-env": "^6.0.3",
     "eslint": "^6.8.0",
     "eslint-plugin-react": "^7.17.0",
     "fork-ts-checker-webpack-plugin": "^3.1.1",
     "gsap": "^3.0.4",
+    "normalize.css": "^8.0.1",
     "prettier": "^1.19.1",
     "prop-types": "^15.7.2",
     "react": "^16.12.0",
@@ -100,6 +125,11 @@
   "peerDependencies": {
     "scrollmagic": "^2.0.7"
   },
+  "peerDependenciesMeta": {
+    "scrollmagic": {
+      "optional": true
+    }
+  },
   "bugs": {
     "url": "https://github.com/jonkwheeler/ScrollScene/issues"
   },
@@ -110,5 +140,6 @@
     "scrollscene",
     "gsap",
     "greensock"
-  ]
+  ],
+  "packageManager": "pnpm@9.15.9"
 }
