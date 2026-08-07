@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="360" viewBox="0 0 640 360" role="img" aria-label="ScrollScene demo video poster">
+  <rect width="640" height="360" fill="#2b5876" />
+  <rect x="24" y="24" width="592" height="312" rx="12" fill="#3d6f94" stroke="#9ec5e8" stroke-width="2" />
+  <polygon points="280,140 280,220 360,180" fill="#ffffff" opacity="0.92" />
+  <text x="320" y="280" fill="#e8f4fc" font-family="system-ui, sans-serif" font-size="20" text-anchor="middle">
+    ScrollScene demo video
+  </text>
+</svg>
