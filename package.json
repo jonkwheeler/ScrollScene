@@ -28,7 +28,10 @@
     "node": "20.x"
   },
   "pnpm": {
-    "shamefullyHoist": true
+    "shamefullyHoist": true,
+    "overrides": {
+      "react-draggable": "4.4.5"
+    }
   },
   "repository": {
     "type": "git",
@@ -89,10 +92,13 @@
     "@storybook/addon-notes": "^5.2.8",
     "@storybook/addon-storysource": "^5.3.6",
     "@storybook/react": "^5.2.8",
+    "@types/node": "^14.18.63",
     "babel-eslint": "^10.0.3",
     "babel-loader": "^8.0.6",
     "babel-plugin-add-react-displayname": "^0.0.5",
+    "babel-plugin-dynamic-import-node": "^2.3.3",
     "babel-plugin-module-resolver": "^4.0.0",
+    "core-js": "^3.37.1",
     "cross-env": "^6.0.3",
     "eslint": "^6.8.0",
     "eslint-plugin-react": "^7.17.0",
