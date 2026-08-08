@@ -11,7 +11,7 @@ const config: StorybookConfig = {
     name: '@storybook/react-vite',
     options: {},
   },
-  staticDirs: ['.'],
+  staticDirs: [{ from: './media', to: '/media' }],
   async viteFinal(config) {
     // Storybook already copies staticDirs; avoid Vite writing into the same outDir.
     config.publicDir = false
@@ -19,6 +19,10 @@ const config: StorybookConfig = {
     config.resolve.alias = Object.assign({}, config.resolve.alias, {
       '@src': path.resolve(dirname, '../src'),
     })
+    config.optimizeDeps = config.optimizeDeps || {}
+    config.optimizeDeps.include = Array.from(
+      new Set([...(config.optimizeDeps.include || []), 'scrollmagic', 'is-client']),
+    )
     return config
   },
 }
