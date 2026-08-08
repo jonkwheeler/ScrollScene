@@ -1,8 +1,9 @@
 import * as React from 'react'
 
-export const Stylesheet = () => (
-  <style>
-    {`
+export function Stylesheet() {
+  return (
+    <style>
+      {`
 .w100 {
 	width: 100%;
 }
@@ -79,5 +80,6 @@ export const Stylesheet = () => (
 }
 
 `}
-  </style>
-)
+    </style>
+  )
+}
