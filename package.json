@@ -23,10 +23,14 @@
   "files": [
     "dist"
   ],
-  "sideEffects": ["**/debug.addIndicators.*", "**/scrollmagic-add-indicators.*", "./src/index.ts", "./src/index.js"],
-  "engines": {
-    "node": ">=20.19.0"
-  },
+  "sideEffects": [
+    "**/debug.addIndicators.*",
+    "**/scrollmagic-add-indicators.*",
+    "./dist/commonjs/index.js",
+    "./dist/esm/index.js",
+    "./src/index.ts",
+    "./src/index.js"
+  ],
   "pnpm": {
     "shamefullyHoist": true,
     "onlyBuiltDependencies": ["esbuild"],
