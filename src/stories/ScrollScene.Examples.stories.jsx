@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ScrollScene } from '../ScrollScene';
+import { createScrollScene } from '../ScrollScene';
 import { gsap } from 'gsap';
 import { Stylesheet } from './Stylesheet';
 export default {
@@ -25,7 +25,7 @@ function MimicPinningStory() {
       scale: 1,
       ease: 'power4.out'
     });
-    const scaleBoxScene = new ScrollScene({
+    const scaleBoxScene = createScrollScene({
       triggerElement: screen02trigger.current,
       gsap: {
         timeline: scaleBoxTimeline
@@ -43,7 +43,7 @@ function MimicPinningStory() {
       y: '-100%',
       ease: 'none'
     });
-    const moveOutScene = new ScrollScene({
+    const moveOutScene = createScrollScene({
       triggerElement: screen03trigger.current,
       gsap: {
         timeline: moveOutTimeline

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ScrollObserver } from '../ScrollObserver';
+import { createScrollObserver } from '../ScrollObserver';
 import { gsap } from 'gsap';
 export default {
   title: "ScrollObserver/gsap",
@@ -35,7 +35,7 @@ function BasicExampleStory() {
       duration: 1,
       ease: 'power2.out'
     });
-    const scrollObserver = new ScrollObserver({
+    const scrollObserver = createScrollObserver({
       triggerElement,
       gsap: {
         timeline: tl
@@ -109,7 +109,7 @@ function Offset10Story() {
       duration: 1,
       ease: 'power2.out'
     });
-    const scrollObserver = new ScrollObserver({
+    const scrollObserver = createScrollObserver({
       triggerElement,
       gsap: {
         timeline: tl
@@ -191,7 +191,7 @@ function YoyoTrueDelay0Story() {
       duration: 1,
       ease: 'power2.out'
     });
-    const scrollObserver = new ScrollObserver({
+    const scrollObserver = createScrollObserver({
       triggerElement,
       gsap: {
         timeline: tl,
@@ -269,7 +269,7 @@ function UseDurationTrueStory() {
       duration: 1,
       ease: 'none'
     });
-    const scrollObserver = new ScrollObserver({
+    const scrollObserver = createScrollObserver({
       triggerElement,
       gsap: {
         timeline: tl

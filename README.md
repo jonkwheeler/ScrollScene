@@ -20,7 +20,14 @@ or
 npm install scrollscene scrollmagic
 ```
 
-If you landed on `0.0.25`, bump the dependency (and lockfile) to `0.0.26` or later. No import changes are required. Note that npm `^0.0.25` does not float to `0.0.26` — pin or bump explicitly.
+**1.0 is a breaking release.** Use `createScrollScene` / `createScrollObserver` instead of `new ScrollScene` / `new ScrollObserver`. Run the migrator:
+
+```bash
+pnpm exec scrollscene-codemod path/to/src
+# or: npx scrollscene-codemod path/to/src
+```
+
+If you are still on `0.0.25`, bump at least to `0.0.26` first (npm `^0.0.25` does not float to `0.0.26`), then upgrade to `1.0.0` and run the codemod.
 
 If you plan to use only ScrollObserver, you can still install ScrollMagic as a dev dependency to satisfy the main entry (same as before):
 
@@ -35,19 +42,19 @@ Or skip ScrollMagic entirely with the optional observer entry (see Import below)
 ### ScrollScene (uses ScrollMagic)
 
 ```js
-import { ScrollScene } from 'scrollscene'
+import { createScrollScene } from 'scrollscene'
 ```
 
 ### ScrollObserver (uses IntersectionObserver)
 
 ```js
-import { ScrollObserver } from 'scrollscene'
+import { createScrollObserver } from 'scrollscene'
 ```
 
 Optional: import from the observer entry if you want ScrollObserver without installing ScrollMagic:
 
 ```js
-import { ScrollObserver } from 'scrollscene/observer'
+import { createScrollObserver } from 'scrollscene/observer'
 ```
 
 ### ScrollMagic (with SSR catch)
@@ -85,7 +92,7 @@ Reach for `ScrollScene` when you need ScrollMagic-specific features like `setPin
 | `toggle`         | Toggle a className on an element with `toggle: { element: containerRef.current, className: 'lets-do-this' }`. The `element` key does _not_ accept string; eg: `.className`. Use a dom node selector instead.                                                                                                                                                                                                |
 | `triggerElement` | `triggerElement: document.querySelector('#element')` is used to set the element you wish to trigger events based upon. Does _not_ accept string; eg: `.className`. Use a dom node selector instead. Optional: If left blank, will use top of page.                                                                                                                                                          |
 | `triggerHook`    | Used to change the ScrollMagic `triggerHook`.                                                                                                                                                                                                                                                                                                                                                               |
-| methods          | You can actually apply all the ScrollMagic.Scene methods to `ScrollScene`, like `const scrollScene = new ScrollScene({...}); scrollScene.Scene.on('enter', ())` or `setPin`. See all the options here: http://scrollmagic.io/docs/ScrollMagic.Scene.html. The same goes for ScrollMagic.Controller, `scrollScene.Controller.destroy(true)`, but be careful if you're using the built-in `globalController`. |
+| methods          | You can actually apply all the ScrollMagic.Scene methods to `ScrollScene`, like `const scrollScene = createScrollScene({...}); scrollScene.scene.on('enter', ())` or `setPin`. See all the options here: http://scrollmagic.io/docs/ScrollMagic.Scene.html. The same goes for ScrollMagic.Controller, `scrollScene.controller.destroy(true)`, but be careful if you're using the built-in `globalController`. |
 
 ### ScrollObserver Options (uses IntersectionObserver)
 
@@ -109,7 +116,7 @@ See below for examples.
 
 - This project sought out to overcome the issues of using Gsap3 with ScrollMagic, as well as ESM related problems. In the end it added more features, like video playback, scene init breakpoints, scene duration breakpoints, gsap speed controls, and using an IntersectionObserver when it fits your usecase better.
 - Is written in TypeScript so you have access to the types.
-- This does not include `gsap` or `scrollmagic`. If you plan to use them, you'll need to install them in addition to `scrollscene`. Existing `import { ScrollObserver } from 'scrollscene'` keeps working; optional `import { ScrollObserver } from 'scrollscene/observer'` skips the ScrollMagic peer entirely.
+- This does not include `gsap` or `scrollmagic`. If you plan to use them, you'll need to install them in addition to `scrollscene`. Existing `import { createScrollObserver } from 'scrollscene'` keeps working; optional `import { createScrollObserver } from 'scrollscene/observer'` skips the ScrollMagic peer entirely.
 - This works with Gsap without having to import the extra `animation.gsap.js` file from ScrollMagic (though you'll have to install in yourself `pnpm add gsap` or `npm install gsap`). In turn this is smaller than using ScrollMagic and animation.gsap.js.
 - It allows for scene init breakpoints, and for scene duration breakpoints. This will also will on SSR if implemented correctly.
 - You do not need to create a ScrollMagic controller. It is done for you.
@@ -127,11 +134,11 @@ See below for examples.
 ### ScrollScene (uses ScrollMagic)
 
 ```js
-import { ScrollScene } from 'scrollscene'
+import { createScrollScene } from 'scrollscene'
 
 const myElement = document.querySelector('#element')
 
-const scrollScene = new ScrollScene({
+const scrollScene = createScrollScene({
   triggerElement: myElement,
 })
 ```
@@ -139,12 +146,12 @@ const scrollScene = new ScrollScene({
 #### Toggle a className
 
 ```js
-import { ScrollScene } from 'scrollscene'
+import { createScrollScene } from 'scrollscene'
 
 const domNode = document.querySelector('#element')
 const anotherDomNode = document.querySelector('#element2')
 
-const scrollScene = new ScrollScene({
+const scrollScene = createScrollScene({
   triggerElement: domNode,
   toggle: {
     element: anotherDomNode,
@@ -156,12 +163,12 @@ const scrollScene = new ScrollScene({
 #### Toggle a className on a duration
 
 ```js
-import { ScrollScene } from 'scrollscene'
+import { createScrollScene } from 'scrollscene'
 
 const domNode = document.querySelector('#element')
 const anotherDomNode = document.querySelector('#element2')
 
-const scrollScene = new ScrollScene({
+const scrollScene = createScrollScene({
   triggerElement: domNode,
   toggle: {
     element: anotherDomNode,
@@ -176,12 +183,12 @@ const scrollScene = new ScrollScene({
 #### Add extra options from ScrollMagic (like a triggerHook or offset)
 
 ```js
-import { ScrollScene } from 'scrollscene'
+import { createScrollScene } from 'scrollscene'
 
 const domNode = document.querySelector('#element')
 const anotherDomNode = document.querySelector('#element2')
 
-const scrollScene = new ScrollScene({
+const scrollScene = createScrollScene({
   triggerElement: domNode,
   toggle: {
     element: anotherDomNode,
@@ -195,12 +202,12 @@ const scrollScene = new ScrollScene({
 or anything from [new ScrollMagic.Scene(options)](http://scrollmagic.io/docs/ScrollMagic.Scene.html#constructor) under the `scene` key to contain those options.
 
 ```js
-import { ScrollScene } from 'scrollscene'
+import { createScrollScene } from 'scrollscene'
 
 const domNode = document.querySelector('#element')
 const anotherDomNode = document.querySelector('#element2')
 
-const scrollScene = new ScrollScene({
+const scrollScene = createScrollScene({
   triggerElement: domNode,
   toggle: {
     element: anotherDomNode,
@@ -215,12 +222,12 @@ const scrollScene = new ScrollScene({
 Same for [new ScrollMagic.Controller(options)](http://scrollmagic.io/docs/ScrollMagic.Controller.html#constructor) under the `controller` key to contain those options.
 
 ```js
-import { ScrollScene } from 'scrollscene'
+import { createScrollScene } from 'scrollscene'
 
 const domNode = document.querySelector('#element')
 const anotherDomNode = document.querySelector('#element2')
 
-const scrollScene = new ScrollScene({
+const scrollScene = createScrollScene({
   triggerElement: domNode,
   toggle: {
     element: anotherDomNode,
@@ -235,12 +242,12 @@ const scrollScene = new ScrollScene({
 Use a new local controller
 
 ```js
-import { ScrollScene } from 'scrollscene'
+import { createScrollScene } from 'scrollscene'
 
 const domNode = document.querySelector('#element')
 const anotherDomNode = document.querySelector('#element2')
 
-const scrollScene = new ScrollScene({
+const scrollScene = createScrollScene({
   triggerElement: domNode,
   toggle: {
     element: anotherDomNode,
@@ -253,15 +260,15 @@ const scrollScene = new ScrollScene({
 Add event handlers (`on`) or `setPin`. See options here http://scrollmagic.io/docs/ScrollMagic.Scene.html.
 
 ```js
-import { ScrollScene } from 'scrollscene'
+import { createScrollScene } from 'scrollscene'
 
 const domNode = document.querySelector('#element')
 
-const scrollScene = new ScrollScene({
+const scrollScene = createScrollScene({
   triggerElement: domNode,
 })
 
-scrollScene.Scene.on('enter', function(event) {
+scrollScene.scene.on('enter', function(event) {
   console.log('Scene entered.')
 })
 ```
@@ -269,21 +276,21 @@ scrollScene.Scene.on('enter', function(event) {
 Add methods to the controller. See options here http://scrollmagic.io/docs/ScrollMagic.Controller.html. But be careful if you're using the built-in `globalController`, as it'll impact all the scenes you have.
 
 ```js
-import { ScrollScene } from 'scrollscene'
+import { createScrollScene } from 'scrollscene'
 
 const domNode = document.querySelector('#element')
 
-const scrollScene = new ScrollScene({
+const scrollScene = createScrollScene({
   triggerElement: domNode,
 })
 
-scrollScene.Controller.destroy(true)
+scrollScene.controller.destroy(true)
 ```
 
 #### Using GSAP (Greensock)
 
 ```js
-import { ScrollScene } from 'scrollscene'
+import { createScrollScene } from 'scrollscene'
 import { gsap } from 'gsap'
 
 // create a timeline and add a tween
@@ -297,7 +304,7 @@ myTimeline.to(domNode, {
   ease: 'power2.out',
 })
 
-const scrollScene = new ScrollScene({
+const scrollScene = createScrollScene({
   triggerElement: scrollTrigger,
   gsap: {
     timeline: myTimeline,
@@ -308,7 +315,7 @@ const scrollScene = new ScrollScene({
 #### Using GSAP (Greensock), and setting the reserveSpeed
 
 ```js
-import { ScrollScene } from 'scrollscene'
+import { createScrollScene } from 'scrollscene'
 import { gsap } from 'gsap'
 
 // create a timeline and add a tween
@@ -322,7 +329,7 @@ myTimeline.to(domNode, {
   ease: 'power2.out',
 })
 
-const scrollScene = new ScrollScene({
+const scrollScene = createScrollScene({
   triggerElement: scrollTrigger,
   gsap: {
     timeline: tl,
@@ -334,7 +341,7 @@ const scrollScene = new ScrollScene({
 #### Using GSAP (Greensock), and tying it to the user scrolling with a duration
 
 ```js
-import { ScrollScene } from 'scrollscene'
+import { createScrollScene } from 'scrollscene'
 import { gsap } from 'gsap'
 
 // create a timeline and add a tween
@@ -348,7 +355,7 @@ myTimeline.to(domNode, {
   ease: 'power2.out',
 })
 
-const scrollScene = new ScrollScene({
+const scrollScene = createScrollScene({
   triggerElement: scrollTrigger,
   gsap: {
     timeline: tl,
@@ -362,12 +369,12 @@ const scrollScene = new ScrollScene({
 I added to this package a modified version of the addIndicators plugin. It's easy to use. Just remember to remove it after you're done testing so it doesn't go into production.
 
 ```js
-import { ScrollScene, addIndicators } from 'scrollscene'
+import { createScrollScene, addIndicators } from 'scrollscene'
 
 const domNode = document.querySelector('#element')
 const anotherDomNode = document.querySelector('#element2')
 
-const scrollScene = new ScrollScene({
+const scrollScene = createScrollScene({
   triggerElement: domNode,
   toggle: {
     element: anotherDomNode,
@@ -378,17 +385,17 @@ const scrollScene = new ScrollScene({
   duration: '100%',
 })
 
-scrollScene.Scene.addIndicators({ name: 'pin scene', colorEnd: '#FFFFFF' })
+scrollScene.scene.addIndicators({ name: 'pin scene', colorEnd: '#FFFFFF' })
 ```
 
-_Note_: Notice that it's `scrollScene.Scene`. `scrollScene` actually returns `Scene` and `Controller` methods, which you can then modify. `scrollScene.addIndicators` will not work.
+_Note_: Notice that it's `scrollScene.scene`. `scrollScene` is a handle with `scene` and `controller` (advanced escape hatch). `scrollScene.addIndicators` will not work.
 
 Alternatively you could do this and it'll apply to the built-in globalController...
 
 ```js
-import { ScrollScene, addIndicators } from 'scrollscene'
+import { createScrollScene, addIndicators } from 'scrollscene'
 
-const scrollScene = new ScrollScene({
+const scrollScene = createScrollScene({
   controller: {
     addIndicators: true,
   },
@@ -398,13 +405,14 @@ const scrollScene = new ScrollScene({
 or
 
 ```js
-import { ScrollScene, addIndicators } from 'scrollscene'
+import { createScrollScene, addIndicators } from 'scrollscene'
 
-const scrollScene = new ScrollScene({
+const scrollScene = createScrollScene({
   ...options,
 })
 
-scrollScene.Controller({ addIndicators: true })
+// advanced: reach the ScrollMagic controller on the handle
+scrollScene.controller
 ```
 
 ### ScrollObserver (uses IntersectionObserver)
@@ -412,13 +420,13 @@ scrollScene.Controller({ addIndicators: true })
 #### Toggle a className while element is visible on the page
 
 ```js
-import { ScrollObserver } from 'scrollscene'
+import { createScrollObserver } from 'scrollscene'
 import { gsap } from 'gsap'
 
 const domNode = document.querySelector('#element')
 const anotherDomNode = document.querySelector('#element2')
 
-const scrollObserver = new ScrollObserver({
+const scrollObserver = createScrollObserver({
   triggerElement: domNode,
   toggle: {
     element: anotherDomNode,
@@ -430,7 +438,7 @@ const scrollObserver = new ScrollObserver({
 #### Toggle a Gsap animation while element is visible on the page
 
 ```js
-import { ScrollObserver } from 'scrollscene'
+import { createScrollObserver } from 'scrollscene'
 import { gsap } from 'gsap'
 
 // create a timeline and add a tween
@@ -444,7 +452,7 @@ tl.to(squareElement, {
   ease: 'power2.out',
 })
 
-const scrollObserver = new ScrollObserver({
+const scrollObserver = createScrollObserver({
   triggerElement: domNode,
   gsap: {
     timeline: tl,
@@ -455,7 +463,7 @@ const scrollObserver = new ScrollObserver({
 #### Toggle a Gsap animation while element is visible on the page with a yoyo effect and repeat delay of 0
 
 ```js
-import { ScrollObserver } from 'scrollscene'
+import { createScrollObserver } from 'scrollscene'
 import { gsap } from 'gsap'
 
 // create a timeline and add a tween
@@ -469,7 +477,7 @@ tl.to(squareElement, {
   ease: 'power2.out',
 })
 
-const scrollObserver = new ScrollObserver({
+const scrollObserver = createScrollObserver({
   triggerElement: domNode,
   gsap: {
     timeline: tl,
@@ -482,7 +490,7 @@ const scrollObserver = new ScrollObserver({
 #### Scrub a Gsap timeline based on element visibility
 
 ```js
-import { ScrollObserver } from 'scrollscene'
+import { createScrollObserver } from 'scrollscene'
 import { gsap } from 'gsap'
 
 // create a timeline and add a tween
@@ -496,7 +504,7 @@ tl.to(squareElement, {
   ease: 'power2.out',
 })
 
-const scrollObserver = new ScrollObserver({
+const scrollObserver = createScrollObserver({
   triggerElement: domNode,
   gsap: {
     timeline: tl,
@@ -508,12 +516,12 @@ const scrollObserver = new ScrollObserver({
 #### Start a video when an element is visible and pause the video when it's not
 
 ```js
-import { ScrollObserver } from 'scrollscene'
+import { createScrollObserver } from 'scrollscene'
 
 const domNode = document.querySelector('#element')
 const videoTagDomNode = document.querySelector('#video')
 
-const scrollObserver = new ScrollObserver({
+const scrollObserver = createScrollObserver({
   triggerElement: domNode,
   video: {
     element: videoTagDomNode,
@@ -526,11 +534,11 @@ const scrollObserver = new ScrollObserver({
 #### Using a scene once
 
 ```js
-import { ScrollObserver } from 'scrollscene'
+import { createScrollObserver } from 'scrollscene'
 
 const domNode = document.querySelector('#element')
 
-const scrollObserver = new ScrollObserver({
+const scrollObserver = createScrollObserver({
   triggerElement: domNode,
   destroyImmediately: true,
 })
@@ -539,11 +547,11 @@ const scrollObserver = new ScrollObserver({
 #### Set a percentage for the visibility threshold
 
 ```js
-import { ScrollObserver } from 'scrollscene'
+import { createScrollObserver } from 'scrollscene'
 
 const domNode = document.querySelector('#element')
 
-const scrollObserver = new ScrollObserver({
+const scrollObserver = createScrollObserver({
   triggerElement: domNode,
   whenVisible: '50%',
 })
@@ -554,11 +562,11 @@ const scrollObserver = new ScrollObserver({
 The below would create an array of 100 thresholds ([0, 0.1, 0.2, ... 0.98, 0.99, 1]), effectively says any percent from 1 to 100 of the element intersecting the viewport should trigger the scene.
 
 ```js
-import { ScrollObserver } from 'scrollscene'
+import { createScrollObserver } from 'scrollscene'
 
 const domNode = document.querySelector('#element')
 
-const scrollObserver = new ScrollObserver({
+const scrollObserver = createScrollObserver({
   triggerElement: domNode,
   thresholds: 100,
 })
@@ -569,11 +577,11 @@ const scrollObserver = new ScrollObserver({
 The below adds extra options to the IntersectionObserver. See others properities you could add [here](https://developer.mozilla.org/en-US/docs/Web/API/IntersectionObserver).
 
 ```js
-import { ScrollObserver } from 'scrollscene'
+import { createScrollObserver } from 'scrollscene'
 
 const domNode = document.querySelector('#element')
 
-const scrollObserver = new ScrollObserver({
+const scrollObserver = createScrollObserver({
   triggerElement: domNode,
   observer: { rootMargin: '-50% 0%' },
 })
@@ -582,11 +590,11 @@ const scrollObserver = new ScrollObserver({
 or
 
 ```js
-import { ScrollObserver } from 'scrollscene'
+import { createScrollObserver } from 'scrollscene'
 
 const domNode = document.querySelector('#element')
 
-const scrollObserver = new ScrollObserver({
+const scrollObserver = createScrollObserver({
   triggerElement: domNode,
   observer: {
     rootMargin: '0px',
@@ -614,7 +622,7 @@ With React it's best to do this inside either a `useEffect` hook or using the `c
 See the Storybook source for good examples (story.js) [found here](https://github.com/jonkwheeler/ScrollScene/blob/master/src/stories/story.js).
 
 ```js
-import { ScrollScene } from 'scrollscene'
+import { createScrollScene } from 'scrollscene'
 
 const MyComponent = () => {
   // init ref
@@ -629,7 +637,7 @@ const MyComponent = () => {
       return undefined
     }
 
-    const scrollScene = new ScrollScene({
+    const scrollScene = createScrollScene({
       triggerElement: triggerElement,
       toggle: {
         element: containerElement,
@@ -665,7 +673,7 @@ const MyComponent = () => {
 You can now set `breakpoints` so you scene is more responsive. They work mobile first. The below would set up a scene on tablet, but not mobile, and resizing will init and destroy.
 
 ```js
-const scrollScene = new ScrollScene({
+const scrollScene = createScrollScene({
   breakpoints: { 0: false, 768: true },
 })
 ```
@@ -673,7 +681,7 @@ const scrollScene = new ScrollScene({
 `duration` also can be responsive, finally! The below would set up a scene that lasts 50vh on mobile, 100% after.
 
 ```js
-const scrollScene = new ScrollScene({
+const scrollScene = createScrollScene({
   duration: { 0: '50%', 768: '100%' },
 })
 ```

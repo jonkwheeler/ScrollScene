@@ -204,7 +204,7 @@ interface IScrollSceneToggle extends IScrollObserverToggle {
   reverse?: boolean
 }
 
-interface IScrollScene {
+export interface IScrollScene {
   /**
    * breakpoints
    * @desc Use to set responsiveness of the new ScrollMagic.Scene, mobile-first
@@ -306,21 +306,24 @@ interface IScrollScene {
 // add controller var
 let globalController
 
-const ScrollScene = function(
-  this: any,
-  {
-    breakpoints,
-    controller = {},
-    duration,
-    gsap,
-    offset = 0,
-    scene = {},
-    toggle,
-    triggerElement,
-    triggerHook = 'onEnter',
-    useGlobalController = true,
-  }: IScrollScene,
-) {
+export interface IScrollSceneHandle {
+  destroy: () => void
+  scene: any
+  controller: any
+}
+
+function createScrollScene({
+  breakpoints,
+  controller = {},
+  duration,
+  gsap,
+  offset = 0,
+  scene = {},
+  toggle,
+  triggerElement,
+  triggerHook = 'onEnter',
+  useGlobalController = true,
+}: IScrollScene): IScrollSceneHandle {
   let localController
 
   // check if using a local controller
@@ -338,7 +341,7 @@ const ScrollScene = function(
   if (!triggerElement) {
     errorLog(
       nameSpace,
-      `Be sure to set a const triggerElement = (reactRef.current or document.querySelector) in the new ${nameSpace}({ triggerElement: triggerElement }).`,
+      `Be sure to set a const triggerElement = (reactRef.current or document.querySelector) in createScrollScene({ triggerElement: triggerElement }).`,
     )
   }
 
@@ -363,8 +366,10 @@ const ScrollScene = function(
     setTween(Scene, gsap)
   }
 
-  this.init = function() {
-    controllerIsUse && Scene.addTo(controllerIsUse)
+  const init = function() {
+    if (controllerIsUse) {
+      Scene.addTo(controllerIsUse)
+    }
   }
 
   /*
@@ -375,22 +380,27 @@ const ScrollScene = function(
     Scene.remove()
   }
 
-  this.destroy = function() {
-    destroyScene()
+  let cleanupInit: (() => void) | undefined
 
-    if (cleanupDuration) {
-      cleanupDuration()
-    }
+  const handle: IScrollSceneHandle = {
+    destroy: function() {
+      destroyScene()
 
-    if (cleanupInit) {
-      cleanupInit()
-    }
+      if (cleanupDuration) {
+        cleanupDuration()
+      }
+
+      if (cleanupInit) {
+        cleanupInit()
+      }
+    },
+    scene: Scene,
+    controller: controllerIsUse,
   }
 
-  this.Scene = Scene
-  this.Controller = controllerIsUse
+  cleanupInit = scrollAnimationInit(breakpoints, init, destroyScene)
 
-  const cleanupInit = scrollAnimationInit(breakpoints, this.init, destroyScene)
+  return handle
 }
 
-export { ScrollScene }
+export { createScrollScene }

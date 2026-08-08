@@ -1,8 +1,8 @@
 {
   "name": "scrollscene",
   "title": "ScrollScene",
-  "version": "0.0.26",
-  "description": "ScrollScene is an extra layer on top of ScrollMagic as well as using IntersectionObserver to achieve similar effects.",
+  "version": "1.0.0",
+  "description": "Factory-based scroll scenes on ScrollMagic and IntersectionObserver, with a 1.0 migrator.",
   "author": "Jon K. Wheeler",
   "license": "MIT",
   "main": "./dist/commonjs/index.js",
@@ -20,8 +20,12 @@
       "types": "./dist/commonjs/observer.d.ts"
     }
   },
+  "bin": {
+    "scrollscene-codemod": "./codemod/scrollscene-codemod.js"
+  },
   "files": [
-    "dist"
+    "dist",
+    "codemod/scrollscene-codemod.js"
   ],
   "sideEffects": [
     "**/debug.addIndicators.*",
@@ -61,8 +65,8 @@
     "portStorybook": "8888"
   },
   "scripts": {
-    "build:commonjs": "pnpm run nuke:commonjs && cross-env BABEL_ENV=commonjs babel $npm_package_config_dirSrc --out-dir $npm_package_config_dirCommonjs --extensions \".ts,.tsx,.js,.jsx\" --ignore \"**/*.stories.js\",\"**/*.stories.jsx\",\"**/*.stories.ts\",\"**/*.stories.tsx\",\"**/story.js\",\"**/stories\",\"**/*.test.js\",\"test.js\",\"**/test\",\"**/*.md\",\"**/*.mdx\",\"**/docs\" --source-maps",
-    "build:esm": "pnpm run nuke:esm && cross-env BABEL_ENV=esm babel $npm_package_config_dirSrc --out-dir $npm_package_config_dirEsm --extensions \".ts,.tsx,.js,.jsx\" --ignore \"**/*.stories.js\",\"**/*.stories.jsx\",\"**/*.stories.ts\",\"**/*.stories.tsx\",\"**/story.js\",\"**/stories\",\"**/*.test.js\",\"test.js\",\"**/test\",\"**/*.md\",\"**/*.mdx\",\"**/docs\" --source-maps",
+    "build:commonjs": "pnpm run nuke:commonjs && cross-env BABEL_ENV=commonjs babel $npm_package_config_dirSrc --out-dir $npm_package_config_dirCommonjs --extensions \".ts,.tsx,.js,.jsx\" --ignore \"**/*.stories.js\",\"**/*.stories.jsx\",\"**/*.stories.ts\",\"**/*.stories.tsx\",\"**/story.js\",\"**/stories\",\"**/*.test.js\",\"**/*.test.ts\",\"test.js\",\"**/test\",\"**/*.md\",\"**/*.mdx\",\"**/docs\" --source-maps",
+    "build:esm": "pnpm run nuke:esm && cross-env BABEL_ENV=esm babel $npm_package_config_dirSrc --out-dir $npm_package_config_dirEsm --extensions \".ts,.tsx,.js,.jsx\" --ignore \"**/*.stories.js\",\"**/*.stories.jsx\",\"**/*.stories.ts\",\"**/*.stories.tsx\",\"**/story.js\",\"**/stories\",\"**/*.test.js\",\"**/*.test.ts\",\"test.js\",\"**/test\",\"**/*.md\",\"**/*.mdx\",\"**/docs\" --source-maps",
     "build:package": "pnpm run build:commonjs && pnpm run build:esm && pnpm run build:types",
     "build:storybook": "storybook build -o $npm_package_config_dirStorybookBuild",
     "build:types:commonjs": "tsc --project tsconfig.types.cjs.json && tsconfig-replace-paths --project tsconfig.types.cjs.json",
@@ -71,6 +75,8 @@
     "build": "pnpm run build:storybook",
     "dev": "pnpm run start:storybook",
     "lint": "eslint .",
+    "test": "vitest run",
+    "test:watch": "vitest",
     "nuke:all:install:dev": "pnpm run nuke:all && pnpm install && pnpm run dev",
     "nuke:all:install": "pnpm run nuke:all && pnpm install",
     "nuke:all": "rm -rf node_modules .cache $npm_package_config_dirBuild pnpm-lock.yaml yarn.lock yarn-error.log package-lock.json",
@@ -113,6 +119,7 @@
     "eslint": "^6.8.0",
     "eslint-plugin-react": "^7.17.0",
     "gsap": "^3.0.4",
+    "jsdom": "26",
     "normalize.css": "^8.0.1",
     "prettier": "^1.19.1",
     "react": "^18.3.1",
@@ -126,7 +133,8 @@
     "tslint-eslint-rules": "^5.4.0",
     "types-installer": "^1.6.3",
     "typescript": "^5.8.2",
-    "vite": "^6.2.0"
+    "vite": "^6.2.0",
+    "vitest": "3"
   },
   "peerDependencies": {
     "scrollmagic": "^2.0.7"

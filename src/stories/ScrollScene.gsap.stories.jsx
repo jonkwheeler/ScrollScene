@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ScrollScene } from '../ScrollScene';
+import { createScrollScene } from '../ScrollScene';
 import { gsap } from 'gsap';
 export default {
   title: "ScrollScene/gsap",
@@ -35,7 +35,7 @@ function BasicExampleStory() {
       duration: 1,
       ease: 'power2.out'
     });
-    const scrollScene = new ScrollScene({
+    const scrollScene = createScrollScene({
       triggerElement,
       gsap: {
         timeline: tl
@@ -113,7 +113,7 @@ function ReverseSpeed4TriggerHook0Story() {
       duration: 1,
       ease: 'power2.out'
     });
-    const scrollScene = new ScrollScene({
+    const scrollScene = createScrollScene({
       triggerElement,
       gsap: {
         timeline: tl,
@@ -192,7 +192,7 @@ function ForwardSpeed2ReverseSpeed05Story() {
       duration: 1,
       ease: 'power2.out'
     });
-    const scrollScene = new ScrollScene({
+    const scrollScene = createScrollScene({
       triggerElement,
       gsap: {
         timeline: tl,
@@ -272,7 +272,7 @@ function Duration500Story() {
       duration: 1,
       ease: 'none'
     });
-    const scrollScene = new ScrollScene({
+    const scrollScene = createScrollScene({
       triggerElement,
       gsap: {
         timeline: tl
