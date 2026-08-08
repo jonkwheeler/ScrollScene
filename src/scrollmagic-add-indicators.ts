@@ -1,10 +1,8 @@
-import isClient from 'is-client'
-
 /*
- * Historical export used by `export { addIndicators } from './scrollmagic-add-indicators'`.
- * Plugin registration is a side-effect import in `src/index.ts`.
- * Keep a client-only placeholder so the named export remains defined.
+ * Side-effect import registers Scene.addIndicators on ScrollMagic.
+ * src/index.ts also imports the plugin directly so the binding can be tree-shaken
+ * while registration still runs for package consumers.
  */
-const addindicators = isClient() ? {} : undefined
+import './plugins/debug.addIndicators'
 
-export default addindicators
+export default undefined
