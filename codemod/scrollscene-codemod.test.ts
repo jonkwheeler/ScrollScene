@@ -28,4 +28,9 @@ describe('scrollscene-codemod', function() {
       "import { createScrollScene } from 'scrollscene'\nconst x = createScrollScene({ triggerElement: el })\nx.scene.on('enter', fn)\n"
     expect(transformSource(input)).toBe(input)
   })
+
+  it('does not rewrite scrollMagic.Controller class access', function() {
+    const input = "const c = new scrollMagic.Controller()\nconst s = new scrollMagic.Scene()\n"
+    expect(transformSource(input)).toBe(input)
+  })
 })

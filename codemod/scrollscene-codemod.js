@@ -52,8 +52,11 @@ function transformSource(source) {
     'import { createScrollObserver, $1} from $2$3$2',
   )
 
-  next = next.replace(/\b(?!ScrollMagic)(\w+)\.Scene\b/g, '$1.scene')
-  next = next.replace(/\b(?!ScrollMagic)(\w+)\.Controller\b/g, '$1.controller')
+  /* relative default-style is uncommon; named imports covered above */
+
+  /* Only rewrite handle property access — never ScrollMagic / scrollMagic class APIs */
+  next = next.replace(/\b(?![Ss]croll[Mm]agic)(\w+)\.Scene\b/g, '$1.scene')
+  next = next.replace(/\b(?![Ss]croll[Mm]agic)(\w+)\.Controller\b/g, '$1.controller')
 
   return next
 }
