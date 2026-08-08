@@ -1,11 +1,11 @@
 import throttle from 'lodash.throttle'
 import { isObject } from './isObject'
 
-export const scrollAnimationInit = (breakpoints, init, destroy) => {
+export const scrollAnimationInit = function(breakpoints, init, destroy) {
   if (isObject(breakpoints)) {
     const keys = Object.keys(breakpoints).reverse()
 
-    const fn = () => {
+    const fn = function() {
       for (let index = 0; index < keys.length; index += 1) {
         const breakpoint = parseFloat(keys[index])
 
@@ -21,10 +21,19 @@ export const scrollAnimationInit = (breakpoints, init, destroy) => {
       }
     }
 
+    const throttledFn = throttle(fn, 700)
+
     fn()
 
-    window.addEventListener('resize', throttle(fn, 700))
-  } else {
-    init()
+    window.addEventListener('resize', throttledFn)
+
+    return function cleanup() {
+      throttledFn.cancel()
+      window.removeEventListener('resize', throttledFn)
+    }
   }
+
+  init()
+
+  return function cleanup() {}
 }

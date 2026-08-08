@@ -6,6 +6,7 @@ Slightly modified version of this: https://github.com/janpaepke/ScrollMagic/blob
 */
 
 import ScrollMagic from '../scrollmagic-with-ssr'
+import throttle from 'lodash.throttle'
 
 var NAMESPACE = 'debug.addIndicators'
 
@@ -177,14 +178,17 @@ ScrollMagic.Controller.extend(function() {
     _indicators.updateTriggerGroupPositions()
   }
 
-  _container.addEventListener('resize', handleTriggerPositionChange)
+  var throttledHandleTriggerPositionChange = throttle(handleTriggerPositionChange, 100)
+  var throttledHandleBoundsPositionChange = throttle(handleBoundsPositionChange, 100)
+
+  _container.addEventListener('resize', throttledHandleTriggerPositionChange, { passive: true })
   if (!_isDocument) {
-    window.addEventListener('resize', handleTriggerPositionChange)
-    window.addEventListener('scroll', handleTriggerPositionChange)
+    window.addEventListener('resize', throttledHandleTriggerPositionChange, { passive: true })
+    window.addEventListener('scroll', throttledHandleTriggerPositionChange, { passive: true })
   }
   // update all related bounds containers
-  _container.addEventListener('resize', handleBoundsPositionChange)
-  _container.addEventListener('scroll', handleBoundsPositionChange)
+  _container.addEventListener('resize', throttledHandleBoundsPositionChange, { passive: true })
+  _container.addEventListener('scroll', throttledHandleBoundsPositionChange, { passive: true })
 
   // updates the position of the bounds container to aligned to the right for vertical containers and to the bottom for horizontal
   this._indicators.updateBoundsPositions = function(specificIndicator) {
@@ -285,13 +289,15 @@ ScrollMagic.Controller.extend(function() {
 
   // remove all previously set listeners on destroy
   this.destroy = function() {
-    _container.removeEventListener('resize', handleTriggerPositionChange)
+    throttledHandleTriggerPositionChange.cancel()
+    throttledHandleBoundsPositionChange.cancel()
+    _container.removeEventListener('resize', throttledHandleTriggerPositionChange)
     if (!_isDocument) {
-      window.removeEventListener('resize', handleTriggerPositionChange)
-      window.removeEventListener('scroll', handleTriggerPositionChange)
+      window.removeEventListener('resize', throttledHandleTriggerPositionChange)
+      window.removeEventListener('scroll', throttledHandleTriggerPositionChange)
     }
-    _container.removeEventListener('resize', handleBoundsPositionChange)
-    _container.removeEventListener('scroll', handleBoundsPositionChange)
+    _container.removeEventListener('resize', throttledHandleBoundsPositionChange)
+    _container.removeEventListener('scroll', throttledHandleBoundsPositionChange)
     // call original destroy method
     this.$super.destroy.apply(this, arguments)
   }
