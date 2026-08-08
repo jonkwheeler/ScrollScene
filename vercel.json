@@ -2,10 +2,5 @@
   "buildCommand": "pnpm build",
   "outputDirectory": "public",
   "installCommand": "pnpm install",
-  "framework": null,
-  "build": {
-    "env": {
-      "NODE_OPTIONS": "--openssl-legacy-provider"
-    }
-  }
+  "framework": null
 }

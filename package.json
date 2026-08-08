@@ -1,7 +1,7 @@
 {
   "name": "scrollscene",
   "title": "ScrollScene",
-  "version": "0.0.24",
+  "version": "0.0.25",
   "description": "ScrollScene is an extra layer on top of ScrollMagic as well as using IntersectionObserver to achieve similar effects.",
   "author": "Jon K. Wheeler",
   "license": "MIT",
@@ -25,10 +25,11 @@
   ],
   "sideEffects": ["**/debug.addIndicators.*", "**/scrollmagic-add-indicators.*", "./src/index.ts", "./src/index.js"],
   "engines": {
-    "node": "20.x"
+    "node": ">=20.19.0"
   },
   "pnpm": {
     "shamefullyHoist": true,
+    "onlyBuiltDependencies": ["esbuild"],
     "overrides": {
       "react-draggable": "4.4.5"
     }
@@ -51,14 +52,14 @@
     "portStorybook": "8888"
   },
   "scripts": {
-    "build:commonjs": "pnpm run nuke:commonjs && cross-env BABEL_ENV=commonjs babel $npm_package_config_dirSrc --out-dir $npm_package_config_dirCommonjs --extensions \".ts,.tsx,.js,.jsx\" --ignore \"**/*.stories.js\",\"**/story.js\",\"**/stories\",\"**/*.test.js\",\"test.js\",\"**/test\",\"**/*.md\",\"**/docs\" --source-maps",
-    "build:esm": "pnpm run nuke:esm && cross-env BABEL_ENV=esm babel $npm_package_config_dirSrc --out-dir $npm_package_config_dirEsm --extensions \".ts,.tsx,.js,.jsx\" --ignore \"**/*.stories.js\",\"**/story.js\",\"**/stories\",\"**/*.test.js\",\"test.js\",\"**/test\",\"**/*.md\",\"**/docs\" --source-maps",
+    "build:commonjs": "pnpm run nuke:commonjs && cross-env BABEL_ENV=commonjs babel $npm_package_config_dirSrc --out-dir $npm_package_config_dirCommonjs --extensions \".ts,.tsx,.js,.jsx\" --ignore \"**/*.stories.js\",\"**/*.stories.jsx\",\"**/*.stories.ts\",\"**/*.stories.tsx\",\"**/story.js\",\"**/stories\",\"**/*.test.js\",\"test.js\",\"**/test\",\"**/*.md\",\"**/*.mdx\",\"**/docs\" --source-maps",
+    "build:esm": "pnpm run nuke:esm && cross-env BABEL_ENV=esm babel $npm_package_config_dirSrc --out-dir $npm_package_config_dirEsm --extensions \".ts,.tsx,.js,.jsx\" --ignore \"**/*.stories.js\",\"**/*.stories.jsx\",\"**/*.stories.ts\",\"**/*.stories.tsx\",\"**/story.js\",\"**/stories\",\"**/*.test.js\",\"test.js\",\"**/test\",\"**/*.md\",\"**/*.mdx\",\"**/docs\" --source-maps",
     "build:package": "pnpm run build:commonjs && pnpm run build:esm && pnpm run build:types",
-    "build:storybook": "build-storybook -s $npm_package_config_dirStorybook -o $npm_package_config_dirStorybookBuild",
+    "build:storybook": "storybook build -o $npm_package_config_dirStorybookBuild",
     "build:types:commonjs": "tsc --project tsconfig.types.cjs.json && tsconfig-replace-paths --project tsconfig.types.cjs.json",
     "build:types:esm": "tsc --project tsconfig.types.esm.json && tsconfig-replace-paths --project tsconfig.types.esm.json",
     "build:types": "pnpm run build:types:commonjs && pnpm run build:types:esm",
-    "build": "cross-env NODE_OPTIONS=--openssl-legacy-provider pnpm run build:storybook",
+    "build": "pnpm run build:storybook",
     "dev": "pnpm run start:storybook",
     "lint": "eslint .",
     "nuke:all:install:dev": "pnpm run nuke:all && pnpm install && pnpm run dev",
@@ -70,7 +71,7 @@
     "nuke:esm": "rm -rf $npm_package_config_dirEsm",
     "prepublishOnly": "pnpm run nuke:build:rebuild",
     "release": "pnpm exec release-it",
-    "start:storybook": "start-storybook -p $npm_package_config_portStorybook -c $npm_package_config_dirStorybook",
+    "start:storybook": "storybook dev -p $npm_package_config_portStorybook -c $npm_package_config_dirStorybook",
     "storybook": "pnpm run start:storybook"
   },
   "dependencies": {
@@ -88,13 +89,13 @@
     "@babel/preset-env": "^7.7.7",
     "@babel/preset-react": "^7.7.4",
     "@babel/preset-typescript": "^7.7.7",
-    "@storybook/addon-knobs": "^5.2.8",
-    "@storybook/addon-notes": "^5.2.8",
-    "@storybook/addon-storysource": "^5.3.6",
-    "@storybook/react": "^5.2.8",
-    "@types/node": "^14.18.63",
+    "@storybook/addon-docs": "^10.5.7",
+    "@storybook/react-vite": "^10.5.7",
+    "@types/node": "^20.19.0",
+    "@types/react": "^18.3.18",
+    "@types/react-dom": "^18.3.5",
+    "@vitejs/plugin-react": "^4.3.4",
     "babel-eslint": "^10.0.3",
-    "babel-loader": "^8.0.6",
     "babel-plugin-add-react-displayname": "^0.0.5",
     "babel-plugin-dynamic-import-node": "^2.3.3",
     "babel-plugin-module-resolver": "^4.0.0",
@@ -102,25 +103,21 @@
     "cross-env": "^6.0.3",
     "eslint": "^6.8.0",
     "eslint-plugin-react": "^7.17.0",
-    "fork-ts-checker-webpack-plugin": "^3.1.1",
     "gsap": "^3.0.4",
     "normalize.css": "^8.0.1",
     "prettier": "^1.19.1",
-    "prop-types": "^15.7.2",
-    "react": "^16.12.0",
-    "react-dom": "^16.12.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
     "release-it": "^12.4.3",
     "scrollmagic": "^2.0.7",
-    "storybook": "^5.1.11",
-    "styled-components": "^4.4.1",
-    "ts-loader": "^6.2.1",
+    "storybook": "^10.5.7",
     "tsconfig-replace-paths": "^0.0.5",
     "tslint": "^5.20.1",
     "tslint-config-prettier": "^1.18.0",
     "tslint-eslint-rules": "^5.4.0",
     "types-installer": "^1.6.3",
-    "typescript": "^3.7.4",
-    "webpack": "^4.41.5"
+    "typescript": "^5.8.2",
+    "vite": "^6.2.0"
   },
   "peerDependencies": {
     "scrollmagic": "^2.0.7"

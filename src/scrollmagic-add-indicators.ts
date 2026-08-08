@@ -1,7 +1,8 @@
-var detect = require('is-client')
-var addindicators = undefined
-if (detect()) {
-  addindicators = require('./plugins/debug.addIndicators')
-}
+/*
+ * Side-effect import registers Scene.addIndicators on ScrollMagic.
+ * src/index.ts also imports the plugin directly so the binding can be tree-shaken
+ * while registration still runs for package consumers.
+ */
+import './plugins/debug.addIndicators'
 
-export default addindicators
+export default undefined
