@@ -48,6 +48,9 @@
     "scope": "jonkwheeler",
     "registry": "https://registry.npmjs.org/"
   },
+  "engines": {
+    "node": "20.x"
+  },
   "config": {
     "dirBuild": "./dist",
     "dirCommonjs": "./dist/commonjs",
