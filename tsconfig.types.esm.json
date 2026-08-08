@@ -11,5 +11,5 @@
     "allowJs": false,
     "emitDeclarationOnly": true
   },
-  "exclude": ["**/*.test.ts"]
+  "exclude": ["**/*.test.ts", "**/*.stories.*", "**/stories/**", "**/*.mdx"]
 }

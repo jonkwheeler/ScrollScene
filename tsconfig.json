@@ -18,7 +18,6 @@
     "jsx": "react",
     "forceConsistentCasingInFileNames": true,
     "noImplicitAny": false,
-    "suppressImplicitAnyIndexErrors": true,
     "allowSyntheticDefaultImports": true,
     "experimentalDecorators": true,
     "rootDir": "./src",
