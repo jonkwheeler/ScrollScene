@@ -23,7 +23,7 @@
   "files": [
     "dist"
   ],
-  "sideEffects": false,
+  "sideEffects": ["**/debug.addIndicators.*", "**/scrollmagic-add-indicators.*", "./src/index.ts", "./src/index.js"],
   "engines": {
     "node": "20.x"
   },
