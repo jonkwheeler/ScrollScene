@@ -1,6 +1,12 @@
 import { Meta, Markdown } from '@storybook/addon-docs/blocks'
 import Readme from '../../README.md?raw'
+import pkg from '../../package.json'
+
+export const docsReadme = Readme.replace(
+  /^\[!\[GitHub tag \(latest by date\)\]\([^\n]+\)\n*/,
+  `![version ${pkg.version}](https://img.shields.io/badge/version-v${pkg.version}-orange)\n\n`
+)
 
 <Meta title="Introduction" />
 
-<Markdown>{Readme}</Markdown>
+<Markdown>{docsReadme}</Markdown>
