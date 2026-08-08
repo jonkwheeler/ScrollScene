@@ -18,6 +18,10 @@ const config: StorybookConfig = {
     config.resolve = config.resolve || {}
     config.resolve.alias = Object.assign({}, config.resolve.alias, {
       '@src': path.resolve(dirname, '../src'),
+      [path.resolve(dirname, '../src/scrollmagic-with-ssr.ts')]: path.resolve(
+        dirname,
+        './shims/scrollmagic-with-ssr.ts',
+      ),
     })
     config.optimizeDeps = config.optimizeDeps || {}
     config.optimizeDeps.include = Array.from(

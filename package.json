@@ -1,7 +1,7 @@
 {
   "name": "scrollscene",
   "title": "ScrollScene",
-  "version": "0.0.25",
+  "version": "0.0.26",
   "description": "ScrollScene is an extra layer on top of ScrollMagic as well as using IntersectionObserver to achieve similar effects.",
   "author": "Jon K. Wheeler",
   "license": "MIT",
@@ -23,13 +23,19 @@
   "files": [
     "dist"
   ],
-  "sideEffects": ["**/debug.addIndicators.*", "**/scrollmagic-add-indicators.*", "./src/index.ts", "./src/index.js"],
-  "engines": {
-    "node": ">=20.19.0"
-  },
+  "sideEffects": [
+    "**/debug.addIndicators.*",
+    "**/scrollmagic-add-indicators.*",
+    "./dist/commonjs/index.js",
+    "./dist/esm/index.js",
+    "./src/index.ts",
+    "./src/index.js"
+  ],
   "pnpm": {
     "shamefullyHoist": true,
-    "onlyBuiltDependencies": ["esbuild"],
+    "onlyBuiltDependencies": [
+      "esbuild"
+    ],
     "overrides": {
       "react-draggable": "4.4.5"
     }
@@ -41,6 +47,9 @@
   "publishConfig": {
     "scope": "jonkwheeler",
     "registry": "https://registry.npmjs.org/"
+  },
+  "engines": {
+    "node": "20.x"
   },
   "config": {
     "dirBuild": "./dist",
