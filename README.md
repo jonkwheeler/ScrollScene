@@ -10,15 +10,38 @@ View the online [Storybook](https://scrollscene.jonkwheeler.now.sh).
 
 ## Install
 
+Pick the path that matches what you import.
+
+### Observer only (no ScrollMagic)
+
+You do **not** need `scrollmagic` if you only use IntersectionObserver scenes:
+
+```bash
+pnpm add scrollscene
+```
+
+Then import from the **separate** observer entry (not the main package entry):
+
 ```js
+import { createScrollObserver } from 'scrollscene/observer'
+```
+
+`scrollscene/observer` does not load ScrollMagic. Importing `createScrollObserver` from `'scrollscene'` (main) still loads the ScrollMagic helpers on that entry — use `/observer` for a ScrollMagic-free install.
+
+### ScrollScene (needs ScrollMagic)
+
+If you use `createScrollScene` (or import from the main `'scrollscene'` entry for ScrollMagic helpers), install the peer:
+
+```bash
 pnpm add scrollscene scrollmagic
+# or: npm install scrollscene scrollmagic
 ```
-
-or
 
 ```js
-npm install scrollscene scrollmagic
+import { createScrollScene } from 'scrollscene'
 ```
+
+### Migrating to 1.0
 
 **1.0 is a breaking release.** Use `createScrollScene` / `createScrollObserver` instead of `new ScrollScene` / `new ScrollObserver`. Run the migrator:
 
@@ -29,15 +52,13 @@ pnpm exec scrollscene-codemod path/to/src
 
 If you are still on `0.0.25`, bump at least to `0.0.26` first (npm `^0.0.25` does not float to `0.0.26`), then upgrade to `1.0.0` and run the codemod.
 
-If you plan to use only ScrollObserver, you can still install ScrollMagic as a dev dependency to satisfy the main entry (same as before):
-
-```js
-pnpm add scrollscene && pnpm add -D scrollmagic
-```
-
-Or skip ScrollMagic entirely with the optional observer entry (see Import below).
-
 ## Import
+
+| What you need | Install | Import |
+| --- | --- | --- |
+| Observer only, no ScrollMagic | `scrollscene` | `import { createScrollObserver } from 'scrollscene/observer'` |
+| Observer + optional ScrollMagic on main | `scrollscene` (+ `scrollmagic` if you also use Scene) | `import { createScrollObserver } from 'scrollscene'` |
+| ScrollMagic scenes | `scrollscene` + `scrollmagic` | `import { createScrollScene } from 'scrollscene'` |
 
 ### ScrollScene (uses ScrollMagic)
 
@@ -45,17 +66,23 @@ Or skip ScrollMagic entirely with the optional observer entry (see Import below)
 import { createScrollScene } from 'scrollscene'
 ```
 
-### ScrollObserver (uses IntersectionObserver)
+Requires the `scrollmagic` peer dependency.
+
+### ScrollObserver without ScrollMagic
+
+```js
+import { createScrollObserver } from 'scrollscene/observer'
+```
+
+No `scrollmagic` install. Prefer this path for Observer-only apps.
+
+### ScrollObserver from the main entry
 
 ```js
 import { createScrollObserver } from 'scrollscene'
 ```
 
-Optional: import from the observer entry if you want ScrollObserver without installing ScrollMagic:
-
-```js
-import { createScrollObserver } from 'scrollscene/observer'
-```
+Works, but the main entry also ships ScrollMagic loaders — use `scrollscene/observer` if you want to skip installing ScrollMagic.
 
 ### ScrollMagic (with SSR catch)
 
@@ -69,14 +96,13 @@ or
 import { ScrollMagicSsr } from 'scrollscene'
 ```
 
-`ScrollMagic` and `ScrollMagicSsr` are the exact same thing.
+`ScrollMagic` and `ScrollMagicSsr` are the exact same thing. Only relevant when you use the main entry / `createScrollScene`.
 
 ## Which should you use?
 
-Prefer `ScrollObserver` for most use cases. It runs on IntersectionObserver, so the browser computes visibility off the main thread — no scroll-event tax while the user scrolls. Use `scrollscene/observer` if you want that path without a ScrollMagic install.
+Prefer **ScrollObserver** for most use cases. It runs on IntersectionObserver, so the browser computes visibility off the main thread — no scroll-event tax while the user scrolls. For that path, install only `scrollscene` and import from `scrollscene/observer`.
 
-Reach for `ScrollScene` when you need ScrollMagic-specific features like `setPin`, a `triggerHook` tied to scroll position, or scrubbing a timeline across a pixel-based `duration`.
-
+Reach for **ScrollScene** when you need ScrollMagic-specific features like `setPin`, a `triggerHook` tied to scroll position, or scrubbing a timeline across a pixel-based `duration` — and install `scrollmagic` with it.
 ## Options
 
 ### ScrollScene Options (uses ScrollMagic)
@@ -116,7 +142,7 @@ See below for examples.
 
 - This project sought out to overcome the issues of using Gsap3 with ScrollMagic, as well as ESM related problems. In the end it added more features, like video playback, scene init breakpoints, scene duration breakpoints, gsap speed controls, and using an IntersectionObserver when it fits your usecase better.
 - Is written in TypeScript so you have access to the types.
-- This does not include `gsap` or `scrollmagic`. If you plan to use them, you'll need to install them in addition to `scrollscene`. Existing `import { createScrollObserver } from 'scrollscene'` keeps working; optional `import { createScrollObserver } from 'scrollscene/observer'` skips the ScrollMagic peer entirely.
+- This does not include `gsap` or `scrollmagic`. Observer-only apps: install `scrollscene` alone and import from `scrollscene/observer`. ScrollMagic scenes: also install `scrollmagic` and import `createScrollScene` from `'scrollscene'`. Main-entry `createScrollObserver` still works but is not ScrollMagic-free.
 - This works with Gsap without having to import the extra `animation.gsap.js` file from ScrollMagic (though you'll have to install in yourself `pnpm add gsap` or `npm install gsap`). In turn this is smaller than using ScrollMagic and animation.gsap.js.
 - It allows for scene init breakpoints, and for scene duration breakpoints. This will also will on SSR if implemented correctly.
 - You do not need to create a ScrollMagic controller. It is done for you.
