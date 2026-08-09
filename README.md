@@ -57,9 +57,9 @@ Importing `createScrollObserver` from `'scrollscene'` (main) still works, but th
 
 ## Which should you use?
 
-Prefer **ScrollObserver** for most visibility / toggle / play-when-visible work. It uses IntersectionObserver and stays off the scroll-event path.
+**ScrollObserver** is based on whether the trigger is **in the viewport** (IntersectionObserver). Use it for visibility toggles, play-when-visible, and similar “is this element on screen?” work. It stays off the scroll-event path. When the element leaves the viewport, Observer only knows it is no longer intersecting — not a ScrollMagic-style “you have scrolled past this waypoint” progress model — unless you opt into `persistWhenPast` (active while in view or scrolled past; inactive only when still below).
 
-Use **ScrollScene** when you need ScrollMagic features such as `setPin`, a scroll-position `triggerHook`, or scrubbing a timeline across a pixel `duration`.
+**ScrollScene** is **waypoint / scroll-position** based (ScrollMagic). Scenes track where you are relative to a trigger (`BEFORE` / `DURING` / `AFTER`), so an action can fire because you reached or passed a point even when that element is no longer on screen. Use it for `setPin`, `triggerHook`, pixel `duration` scrubbing, and anything that depends on scroll progress past a point — not just current visibility.
 
 ## Options
 
@@ -86,6 +86,7 @@ Use **ScrollScene** when you need ScrollMagic features such as `setPin`, a scrol
 | `gsap`               | Init a Gsap timeline with `gsap: { timeline: myTimeline, reverseSpeed: 2, yoyo: true, delay: 2 }`.                                                                                                                                                                                                                         |
 | `observer`           | `observer: { rootMargin: '-50% 0%' }` is used to pass extra options to pass the IntersectionObserver, like `root`, `rootMargin`, or `threshold` (to override the thresholds option). `observer: { rootMargin: '0px', threshold: 1.0 }`                                                                                     |
 | `offset`             | Used to change the `rootMargin` easy. `offset: '-10%` will be `rootMargin: '-10% 0%'`. This is a bit wonky and needs more testing.                                                                                                                                                                                         |
+| `persistWhenPast`    | `persistWhenPast: true` keeps the scene active after the trigger scrolls past the top of the viewport (fade in and stay). It deactivates only when the trigger is entirely below again (scroll back up). Default `false` turns inactive whenever the trigger leaves the viewport either way. |
 | `thresholds`         | `thresholds: 1` is to set the number of thresholds you want. `thresholds: 100 = [0, 0.1, 0.2, ... 0.98, 0.99, 1]`. It's easy to use `whenVisible`.                                                                                                                                                                         |
 | `toggle`             | Toggle a className on an element with `toggle: { element: containerRef.current, className: 'lets-do-this' }`. The `element` key does _not_ accept string; eg: `.className`. Use a dom node selector instead.                                                                                                               |
 | `triggerElement`     | `triggerElement: document.querySelector('#element')` is used to set the element you wish to trigger events based upon. Does _not_ accept string; eg: `.className`. Use a dom node selector instead.                                                                                                                        |
@@ -410,6 +411,26 @@ const scrollObserver = createScrollObserver({
   },
 })
 ```
+
+#### Keep active after scrolling past (fade in and stay)
+
+```js
+import { createScrollObserver } from 'scrollscene/observer'
+
+const domNode = document.querySelector('#element')
+const anotherDomNode = document.querySelector('#element2')
+
+const scrollObserver = createScrollObserver({
+  triggerElement: domNode,
+  persistWhenPast: true,
+  toggle: {
+    element: anotherDomNode,
+    className: 'is-visible',
+  },
+})
+```
+
+With `persistWhenPast: true`, the scene stays active after the trigger leaves the top of the viewport. It turns inactive again only when the trigger is entirely below (scroll back up past it). Same rule applies to `gsap`, `video`, and `callback`.
 
 #### Toggle a Gsap animation while element is visible on the page
 

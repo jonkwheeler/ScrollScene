@@ -2,6 +2,46 @@ import { errorLog, isFunc, isObject, scrollAnimationInit, createArray, isString,
 
 const nameSpace = 'ScrollObserver'
 
+type TriggerPosition = 'in' | 'above' | 'below'
+
+/*
+ * IntersectionObserver isIntersecting alone cannot tell above vs below.
+ * Use entry geometry (rootBounds respects rootMargin / custom root).
+ */
+function getTriggerPosition(entry, visibilityRatio): TriggerPosition {
+  if (visibilityRatio) {
+    if (entry.intersectionRatio >= visibilityRatio) {
+      return 'in'
+    }
+  } else if (entry.isIntersecting) {
+    return 'in'
+  }
+
+  const bounds = entry.boundingClientRect
+  const root =
+    entry.rootBounds ||
+    ({
+      top: 0,
+      bottom: typeof window !== 'undefined' ? window.innerHeight : 0,
+    } as DOMRectReadOnly)
+
+  if (bounds.bottom <= root.top) {
+    return 'above'
+  }
+
+  if (bounds.top >= root.bottom) {
+    return 'below'
+  }
+
+  if (entry.isIntersecting) {
+    return 'in'
+  }
+
+  const mid = (bounds.top + bounds.bottom) / 2
+  const rootMid = (root.top + root.bottom) / 2
+  return mid < rootMid ? 'above' : 'below'
+}
+
 // @ts-ignore
 const state = function(visible, alreadyFired) {
   this.visible = false
@@ -367,6 +407,17 @@ export interface IScrollObserver {
   offset?: number | string
 
   /**
+   * persistWhenPast
+   * @desc Keep the scene active after the trigger scrolls past the top of the viewport (above).
+   * Deactivate only when the trigger is entirely below again (scroll back up).
+   * Default visibility mode turns inactive whenever the trigger leaves the viewport in either direction.
+   * @type boolean
+   * @example
+   * persistWhenPast: true
+   */
+  persistWhenPast?: boolean
+
+  /**
    * thresholds
    * @desc Set the number of thresholds you want.
    * @returns An Array of number from 0 to 1. Add 1 to your number to account for 0.
@@ -437,6 +488,7 @@ function createScrollObserver({
   gsap,
   observer,
   offset,
+  persistWhenPast,
   whenVisible,
   thresholds,
   toggle,
@@ -490,11 +542,20 @@ function createScrollObserver({
   }
 
   const observerCallback = function(entries) {
-    entries.forEach(function({ isIntersecting, intersectionRatio }) {
-      /*
-       * To help the wonkiness of IntersectionObserver, isIntersecting firing true when it's really false
-       */
-      if (ratio) {
+    entries.forEach(function(entry) {
+      const { isIntersecting, intersectionRatio } = entry
+      const position = getTriggerPosition(entry, ratio)
+
+      if (persistWhenPast) {
+        /*
+         * Waypoint-style: active while in view or scrolled past (above);
+         * inactive only when the trigger is still below (not reached / scrolled back).
+         */
+        setState.visible = position === 'in' || position === 'above'
+      } else if (ratio) {
+        /*
+         * To help the wonkiness of IntersectionObserver, isIntersecting firing true when it's really false
+         */
         setState.visible = intersectionRatio >= ratio
       } else if (isIntersecting && !setState.visible) {
         /*
@@ -512,6 +573,10 @@ function createScrollObserver({
       if (setGsap) {
         if (!useDuration) {
           setGsap.update(setState)
+        } else if (persistWhenPast && position === 'above') {
+          setGsap.scrub(1)
+        } else if (persistWhenPast && position === 'below') {
+          setGsap.scrub(0)
         } else {
           setGsap.scrub(intersectionRatio)
         }

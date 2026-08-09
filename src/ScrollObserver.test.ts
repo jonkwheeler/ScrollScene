@@ -10,8 +10,13 @@ describe('createArray', function() {
 })
 
 describe('createScrollObserver', function() {
+  let latestCallback
+
   beforeEach(function() {
+    latestCallback = null
+
     function FakeIntersectionObserver(callback, options) {
+      latestCallback = callback
       this.callback = callback
       this.options = options
       this.observe = vi.fn()
@@ -22,6 +27,22 @@ describe('createScrollObserver', function() {
     // @ts-ignore
     global.IntersectionObserver = FakeIntersectionObserver
   })
+
+  function fireEntry(partial) {
+    latestCallback([
+      Object.assign(
+        {
+          isIntersecting: false,
+          intersectionRatio: 0,
+          boundingClientRect: { top: 0, bottom: 100, height: 100, width: 100, left: 0, right: 100, x: 0, y: 0 },
+          rootBounds: { top: 0, bottom: 800, height: 800, width: 800, left: 0, right: 800, x: 0, y: 0 },
+          time: 0,
+          target: null,
+        },
+        partial,
+      ),
+    ])
+  }
 
   it('returns a handle with destroy and observer', function() {
     const el = document.createElement('div')
@@ -51,6 +72,76 @@ describe('createScrollObserver', function() {
     expect(Array.isArray(threshold)).toBe(true)
     expect(threshold.length).toBe(21)
     expect(threshold.length).toBeLessThan(200)
+
+    handle.destroy()
+  })
+
+  it('with persistWhenPast keeps active after scrolling past, clears when below again', function() {
+    const trigger = document.createElement('div')
+    const toggleEl = document.createElement('div')
+    document.body.appendChild(trigger)
+    document.body.appendChild(toggleEl)
+
+    const handle = createScrollObserver({
+      triggerElement: trigger,
+      persistWhenPast: true,
+      toggle: {
+        element: toggleEl,
+        className: 'is-on',
+      },
+    })
+
+    fireEntry({
+      isIntersecting: true,
+      intersectionRatio: 1,
+      boundingClientRect: { top: 100, bottom: 200, height: 100, width: 100, left: 0, right: 100, x: 0, y: 100 },
+    })
+    expect(toggleEl.classList.contains('is-on')).toBe(true)
+
+    fireEntry({
+      isIntersecting: false,
+      intersectionRatio: 0,
+      boundingClientRect: { top: -200, bottom: -100, height: 100, width: 100, left: 0, right: 100, x: 0, y: -200 },
+    })
+    expect(toggleEl.classList.contains('is-on')).toBe(true)
+
+    fireEntry({
+      isIntersecting: false,
+      intersectionRatio: 0,
+      boundingClientRect: { top: 900, bottom: 1000, height: 100, width: 100, left: 0, right: 100, x: 0, y: 900 },
+    })
+    expect(toggleEl.classList.contains('is-on')).toBe(false)
+
+    handle.destroy()
+  })
+
+  it('without persistWhenPast turns inactive when leaving the viewport upward', function() {
+    const trigger = document.createElement('div')
+    const toggleEl = document.createElement('div')
+    document.body.appendChild(trigger)
+    document.body.appendChild(toggleEl)
+
+    const handle = createScrollObserver({
+      triggerElement: trigger,
+      toggle: {
+        element: toggleEl,
+        className: 'is-on',
+      },
+    })
+
+    fireEntry({
+      isIntersecting: true,
+      intersectionRatio: 1,
+      boundingClientRect: { top: 100, bottom: 200, height: 100, width: 100, left: 0, right: 100, x: 0, y: 100 },
+    })
+    expect(toggleEl.classList.contains('is-on')).toBe(true)
+
+    fireEntry({
+      isIntersecting: false,
+      intersectionRatio: 0,
+      boundingClientRect: { top: -200, bottom: -100, height: 100, width: 100, left: 0, right: 100, x: 0, y: -200 },
+    })
+    expect(toggleEl.classList.contains('is-on')).toBe(false)
 
     handle.destroy()
   })
