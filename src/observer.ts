@@ -1,1 +1,8 @@
-export { ScrollObserver, IScrollObserverGsap, IScrollObserverToggle, IScrollObserverVideo } from './ScrollObserver'
+export {
+  createScrollObserver,
+  IScrollObserver,
+  IScrollObserverHandle,
+  IScrollObserverGsap,
+  IScrollObserverToggle,
+  IScrollObserverVideo,
+} from './ScrollObserver'

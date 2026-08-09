@@ -310,7 +310,7 @@ export interface IScrollObserverVideo {
   element: HTMLElement | any
 }
 
-interface IScrollObserver {
+export interface IScrollObserver {
   /**
    * breakpoints
    * @desc Use to set responsiveness of the ScrollObserver, mobile-first
@@ -425,31 +425,32 @@ interface IScrollObserver {
   whenVisible?: string
 }
 
-const ScrollObserver = function(
-  this: any,
-  {
-    breakpoints,
-    callback,
-    destroyImmediately,
-    gsap,
-    observer,
-    offset,
-    whenVisible,
-    thresholds,
-    toggle,
-    triggerElement,
-    useDuration,
-    video,
-  }: IScrollObserver,
-) {
+export interface IScrollObserverHandle {
+  destroy: () => void
+  observer: IntersectionObserver
+}
+
+function createScrollObserver({
+  breakpoints,
+  callback,
+  destroyImmediately,
+  gsap,
+  observer,
+  offset,
+  whenVisible,
+  thresholds,
+  toggle,
+  triggerElement,
+  useDuration,
+  video,
+}: IScrollObserver): IScrollObserverHandle {
   if (!triggerElement) {
     errorLog(
       nameSpace,
-      'Be sure to set a const triggerElement = (reactRef.current or document.querySelector) in the new ScrollScene({ triggerElement: triggerElement })',
+      'Be sure to set a const triggerElement = (reactRef.current or document.querySelector) in createScrollObserver({ triggerElement: triggerElement })',
     )
   }
 
-  const $this = this
   let setToggle
   let setGsap
   let setVideo
@@ -457,6 +458,12 @@ const ScrollObserver = function(
   let ratio
   let setRootMargin = '0% 0%'
   let setState = new state(false, false)
+  let cleanupInit: (() => void) | undefined
+
+  const handle: IScrollObserverHandle = {
+    destroy: function() {},
+    observer: null as any,
+  }
 
   if (typeof offset === 'number') {
     // protect against positive px values, for now
@@ -483,7 +490,7 @@ const ScrollObserver = function(
   }
 
   const observerCallback = function(entries) {
-    entries.forEach(({ isIntersecting, intersectionRatio }) => {
+    entries.forEach(function({ isIntersecting, intersectionRatio }) {
       /*
        * To help the wonkiness of IntersectionObserver, isIntersecting firing true when it's really false
        */
@@ -499,10 +506,22 @@ const ScrollObserver = function(
         setState.visible = false
       }
 
-      setToggle && setToggle.update(setState)
-      setGsap && (!useDuration ? setGsap.update(setState) : setGsap.scrub(intersectionRatio))
-      setVideo && setVideo.update(setState)
-      setCallback && setCallback.update(setState)
+      if (setToggle) {
+        setToggle.update(setState)
+      }
+      if (setGsap) {
+        if (!useDuration) {
+          setGsap.update(setState)
+        } else {
+          setGsap.scrub(intersectionRatio)
+        }
+      }
+      if (setVideo) {
+        setVideo.update(setState)
+      }
+      if (setCallback) {
+        setCallback.update(setState)
+      }
 
       /*
        * To help with ignoring refiring extra function
@@ -519,12 +538,12 @@ const ScrollObserver = function(
         /*
          * destroy the scene after used once
          */
-        $this.destroy()
+        handle.destroy()
       }
     })
   }
 
-  const getPercentage = value => {
+  const getPercentage = function(value) {
     if (!isString(whenVisible) && !stringContains(whenVisible, '%')) {
       errorLog(nameSpace, 'Be sure to set a percentage as a string. { whenVisible: "50%" }')
     }
@@ -544,7 +563,8 @@ const ScrollObserver = function(
     }
 
     if (useDuration) {
-      returnedThresholds = createArray(199)
+      /* fewer steps than the old 199 — still smooth enough for scrubbing */
+      returnedThresholds = createArray(20)
     }
 
     if (thresholds) {
@@ -560,7 +580,9 @@ const ScrollObserver = function(
     ...observer,
   })
 
-  this.init = function() {
+  handle.observer = Observer
+
+  const init = function() {
     Observer.observe(triggerElement)
   }
 
@@ -586,7 +608,7 @@ const ScrollObserver = function(
     }
   }
 
-  this.destroy = function() {
+  handle.destroy = function() {
     destroyObserver()
 
     if (cleanupInit) {
@@ -594,7 +616,9 @@ const ScrollObserver = function(
     }
   }
 
-  const cleanupInit = scrollAnimationInit(breakpoints, this.init, destroyObserver)
+  cleanupInit = scrollAnimationInit(breakpoints, init, destroyObserver)
+
+  return handle
 }
 
-export { ScrollObserver }
+export { createScrollObserver }

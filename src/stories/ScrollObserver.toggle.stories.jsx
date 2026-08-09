@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ScrollObserver } from '../ScrollObserver';
+import { createScrollObserver } from '../ScrollObserver';
 export default {
   title: "ScrollObserver/toggle (className)",
   parameters: {
@@ -20,7 +20,7 @@ function BasicExampleStory() {
     if (!containerElement && !triggerElement) {
       return undefined;
     }
-    const scrollObserver = new ScrollObserver({
+    const scrollObserver = createScrollObserver({
       triggerElement,
       toggle: {
         element: containerElement,

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ScrollScene } from '../ScrollScene';
+import { createScrollScene } from '../ScrollScene';
 export default {
   title: "ScrollScene/events",
   parameters: {
@@ -20,7 +20,7 @@ function OnEnterOnLeaveStory() {
     if (!containerElement && !triggerElement) {
       return undefined;
     }
-    const scrollScene = new ScrollScene({
+    const scrollScene = createScrollScene({
       triggerElement,
       toggle: {
         element: containerElement,
@@ -30,10 +30,10 @@ function OnEnterOnLeaveStory() {
       triggerHook: 1,
       duration: '100%'
     });
-    scrollScene.Scene.on('enter', function (event) {
+    scrollScene.scene.on('enter', function (event) {
       console.log('Scene entered.');
     });
-    scrollScene.Scene.on('leave', function (event) {
+    scrollScene.scene.on('leave', function (event) {
       console.log('Scene left.');
     });
     return () => {
@@ -45,8 +45,8 @@ function OnEnterOnLeaveStory() {
       height: '50vh'
     }} />
 
-          <h3>{`scrollScene.Scene.on('enter', function(event) {console.log('Scene entered.')})`.toString()}</h3>
-          <h3>{`scrollScene.Scene.on('leave', function(event) {console.log('Scene left.')})`.toString()}</h3>
+          <h3>{`scrollScene.scene.on('enter', function(event) {console.log('Scene entered.')})`.toString()}</h3>
+          <h3>{`scrollScene.scene.on('leave', function(event) {console.log('Scene left.')})`.toString()}</h3>
           <h1>Scroll Down</h1>
 
           <div style={{
@@ -90,7 +90,7 @@ function OnProgressStory() {
     if (!containerElement && !triggerElement) {
       return undefined;
     }
-    const scrollScene = new ScrollScene({
+    const scrollScene = createScrollScene({
       triggerElement,
       toggle: {
         element: containerElement,
@@ -100,7 +100,7 @@ function OnProgressStory() {
       triggerHook: 1,
       duration: '100%'
     });
-    scrollScene.Scene.on('progress', function (event) {
+    scrollScene.scene.on('progress', function (event) {
       console.log('Scene progress changed to ' + event.progress);
     });
     return () => {
@@ -113,7 +113,7 @@ function OnProgressStory() {
     }} />
 
           <h3>
-            {`scrollScene.Scene.on('progress', function(event) {
+            {`scrollScene.scene.on('progress', function(event) {
           console.log('Scene progress changed to ' + event.progress)
         })`.toString()}
           </h3>

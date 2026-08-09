@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ScrollObserver } from '../ScrollObserver';
+import { createScrollObserver } from '../ScrollObserver';
 import DemoVideo from './DemoVideo';
 export default {
   title: "ScrollObserver/video",
@@ -17,7 +17,7 @@ function WhenVisible50Story() {
     if (!videoElement) {
       return undefined;
     }
-    const scrollObserver = new ScrollObserver({
+    const scrollObserver = createScrollObserver({
       triggerElement: videoElement,
       video: {
         element: videoElement,
@@ -69,7 +69,7 @@ function WhenVisible80Story() {
     if (!videoElement) {
       return undefined;
     }
-    const scrollObserver = new ScrollObserver({
+    const scrollObserver = createScrollObserver({
       triggerElement: videoElement,
       video: {
         element: videoElement

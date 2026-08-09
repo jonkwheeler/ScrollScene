@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ScrollObserver } from '../ScrollObserver';
+import { createScrollObserver } from '../ScrollObserver';
 export default {
   title: "ScrollObserver/callback",
   parameters: {
@@ -16,7 +16,7 @@ function ConsoleLogActiveStory() {
     if (!triggerElement) {
       return undefined;
     }
-    const scrollObserver = new ScrollObserver({
+    const scrollObserver = createScrollObserver({
       triggerElement,
       callback: {
         active: () => console.log('active'),
@@ -72,7 +72,7 @@ function DestroyImmediatelyTrueStory() {
     if (!triggerElement) {
       return undefined;
     }
-    const scrollObserver = new ScrollObserver({
+    const scrollObserver = createScrollObserver({
       triggerElement,
       callback: {
         active: () => console.log('active')
@@ -124,7 +124,7 @@ function WhenVisible50Story() {
     if (!triggerElement) {
       return undefined;
     }
-    const scrollObserver = new ScrollObserver({
+    const scrollObserver = createScrollObserver({
       triggerElement,
       callback: {
         active: () => console.log('active'),
@@ -184,14 +184,14 @@ function MultipleTriggersStory() {
     if (!triggerElement1 && !triggerElement2) {
       return undefined;
     }
-    const scrollObserver1 = new ScrollObserver({
+    const scrollObserver1 = createScrollObserver({
       triggerElement: triggerElement1,
       callback: {
         active: () => console.log('trigger 1 active'),
         notActive: () => console.log('trigger 1 notActive')
       }
     });
-    const scrollObserver2 = new ScrollObserver({
+    const scrollObserver2 = createScrollObserver({
       triggerElement: triggerElement2,
       callback: {
         active: () => console.log('trigger 2 active'),

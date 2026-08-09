@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ScrollObserver } from '../ScrollObserver';
+import { createScrollObserver } from '../ScrollObserver';
 import DemoVideo from './DemoVideo';
 export default {
   title: "ScrollObserver/multiple events",
@@ -25,7 +25,7 @@ function ToggleVideoCallbackStory() {
     if (!triggerElement) {
       return undefined;
     }
-    const scrollObserver = new ScrollObserver({
+    const scrollObserver = createScrollObserver({
       triggerElement,
       toggle: {
         element: containerElement,

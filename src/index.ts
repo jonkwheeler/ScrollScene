@@ -1,5 +1,13 @@
-export { ScrollScene } from './ScrollScene'
-export { ScrollObserver } from './ScrollObserver'
+export { createScrollScene } from './ScrollScene'
+export type { IScrollScene, IScrollSceneHandle } from './ScrollScene'
+export { createScrollObserver } from './ScrollObserver'
+export type {
+  IScrollObserver,
+  IScrollObserverHandle,
+  IScrollObserverGsap,
+  IScrollObserverToggle,
+  IScrollObserverVideo,
+} from './ScrollObserver'
 
 import scrollmagic from './scrollmagic-with-ssr'
 export { scrollmagic as ScrollMagic }

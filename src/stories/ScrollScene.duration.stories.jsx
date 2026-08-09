@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ScrollScene } from '../ScrollScene';
+import { createScrollScene } from '../ScrollScene';
 export default {
   title: "ScrollScene/duration",
   parameters: {
@@ -20,7 +20,7 @@ function DurationDomNodeStory() {
     if (!containerElement && !triggerElement) {
       return undefined;
     }
-    const scrollScene = new ScrollScene({
+    const scrollScene = createScrollScene({
       triggerElement,
       toggle: {
         element: containerElement,
@@ -30,7 +30,7 @@ function DurationDomNodeStory() {
       triggerHook: 0.25,
       duration: triggerElement
     });
-    scrollScene.Scene.addIndicators({
+    scrollScene.scene.addIndicators({
       name: 'duration: domNode',
       colorEnd: '#FFFFFF'
     });

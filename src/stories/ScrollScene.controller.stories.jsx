@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ScrollScene } from '../ScrollScene';
+import { createScrollScene } from '../ScrollScene';
 export default {
   title: "ScrollScene/controller",
   parameters: {
@@ -20,7 +20,7 @@ function AddOptionsStory() {
     if (!containerElement && !triggerElement) {
       return undefined;
     }
-    const scrollScene = new ScrollScene({
+    const scrollScene = createScrollScene({
       triggerElement,
       toggle: {
         element: containerElement,
@@ -34,7 +34,7 @@ function AddOptionsStory() {
       },
       useGlobalController: false
     });
-    console.log(scrollScene.Controller.info());
+    console.log(scrollScene.controller.info());
     return () => {
       scrollScene.destroy();
     };

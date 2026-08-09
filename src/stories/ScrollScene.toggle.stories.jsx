@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ScrollScene } from '../ScrollScene';
+import { createScrollScene } from '../ScrollScene';
 export default {
   title: "ScrollScene/toggle (className)",
   parameters: {
@@ -20,7 +20,7 @@ function TriggerHook0Story() {
     if (!containerElement && !triggerElement) {
       return undefined;
     }
-    const scrollScene = new ScrollScene({
+    const scrollScene = createScrollScene({
       triggerElement,
       toggle: {
         element: containerElement,
@@ -28,7 +28,7 @@ function TriggerHook0Story() {
       },
       triggerHook: 0
     });
-    scrollScene.Scene.addIndicators({
+    scrollScene.scene.addIndicators({
       name: 'pin scene',
       colorEnd: '#FFFFFF'
     });
@@ -75,7 +75,7 @@ function TriggerHook05Story() {
     if (!containerElement && !triggerElement) {
       return undefined;
     }
-    const scrollScene = new ScrollScene({
+    const scrollScene = createScrollScene({
       triggerElement,
       toggle: {
         element: containerElement,
@@ -83,7 +83,7 @@ function TriggerHook05Story() {
       },
       triggerHook: 0.5
     });
-    scrollScene.Scene.addIndicators({
+    scrollScene.scene.addIndicators({
       name: 'pin scene',
       colorEnd: '#FFFFFF'
     });
@@ -130,7 +130,7 @@ function TriggerHook1Story() {
     if (!containerElement && !triggerElement) {
       return undefined;
     }
-    const scrollScene = new ScrollScene({
+    const scrollScene = createScrollScene({
       triggerElement,
       toggle: {
         element: containerElement,
@@ -185,7 +185,7 @@ function Duration100ReverseTrueStory() {
     if (!containerElement && !triggerElement) {
       return undefined;
     }
-    const scrollScene = new ScrollScene({
+    const scrollScene = createScrollScene({
       triggerElement,
       toggle: {
         element: containerElement,
@@ -250,7 +250,7 @@ function Offset100TriggerHook05Story() {
     if (!containerElement && !triggerElement) {
       return undefined;
     }
-    const scrollScene = new ScrollScene({
+    const scrollScene = createScrollScene({
       controller: {
         loglevel: 3
       },
@@ -262,7 +262,7 @@ function Offset100TriggerHook05Story() {
       offset: 100,
       triggerHook: 0.5
     });
-    scrollScene.Scene.addIndicators({
+    scrollScene.scene.addIndicators({
       name: 'pin scene',
       colorEnd: '#FFFFFF'
     });
