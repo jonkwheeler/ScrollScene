@@ -9,9 +9,12 @@ export type {
   IScrollObserverVideo,
 } from './ScrollObserver'
 
-import scrollmagic from './scrollmagic-with-ssr'
-export { scrollmagic as ScrollMagic }
-export { scrollmagic as ScrollMagicSsr }
+import ScrollMagic from 'scrollmagic'
+export { ScrollMagic }
 
-import addindicators from './scrollmagic-add-indicators'
-export { addindicators as addIndicators }
+/*
+ * Importing addIndicators registers the ScrollMagic plugin (side effect).
+ * Prefer scrollScene.scene.addIndicators(...) after import.
+ */
+import './plugins/debug.addIndicators'
+export const addIndicators = true

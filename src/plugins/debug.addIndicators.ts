@@ -5,7 +5,7 @@
 Slightly modified version of this: https://github.com/janpaepke/ScrollMagic/blob/master/dev/src/plugins/debug.addIndicators.js
 */
 
-import ScrollMagic from '../scrollmagic-with-ssr'
+import ScrollMagic from 'scrollmagic'
 import throttle from 'lodash.throttle'
 
 var NAMESPACE = 'debug.addIndicators'

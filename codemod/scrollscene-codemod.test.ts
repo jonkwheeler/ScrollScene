@@ -33,4 +33,17 @@ describe('scrollscene-codemod', function() {
     const input = "const c = new scrollMagic.Controller()\nconst s = new scrollMagic.Scene()\n"
     expect(transformSource(input)).toBe(input)
   })
+
+  it('rewrites ScrollMagicSsr to ScrollMagic and dedupes imports', function() {
+    const input =
+      "import { ScrollMagicSsr } from 'scrollscene'\nconst SM = ScrollMagicSsr\n"
+    const out = transformSource(input)
+    expect(out).toContain("import { ScrollMagic } from 'scrollscene'")
+    expect(out).toContain('const SM = ScrollMagic')
+    expect(out).not.toContain('ScrollMagicSsr')
+
+    const both =
+      "import { ScrollMagic, ScrollMagicSsr } from 'scrollscene'\n"
+    expect(transformSource(both)).toBe("import { ScrollMagic } from 'scrollscene'\n")
+  })
 })
