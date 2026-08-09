@@ -1,4 +1,4 @@
-import ScrollMagic from './scrollmagic-with-ssr'
+import ScrollMagic from 'scrollmagic'
 import throttle from 'lodash.throttle'
 import { errorLog, isObject, scrollAnimationInit } from './helpers'
 import { IScrollObserverToggle, IScrollObserverGsap } from './ScrollObserver'

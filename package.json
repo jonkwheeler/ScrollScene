@@ -29,7 +29,6 @@
   ],
   "sideEffects": [
     "**/debug.addIndicators.*",
-    "**/scrollmagic-add-indicators.*",
     "./dist/commonjs/index.js",
     "./dist/esm/index.js",
     "./src/index.ts",
@@ -88,7 +87,6 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.8.4",
-    "is-client": "^0.0.2",
     "lodash.throttle": "^4.1.1"
   },
   "devDependencies": {
@@ -111,7 +109,6 @@
     "babel-plugin-add-react-displayname": "^0.0.5",
     "babel-plugin-dynamic-import-node": "^2.3.3",
     "babel-plugin-module-resolver": "^4.0.0",
-    "core-js": "^3.37.1",
     "cross-env": "^6.0.3",
     "eslint": "^6.8.0",
     "eslint-plugin-react": "^7.17.0",
@@ -144,7 +141,7 @@
   "bugs": {
     "url": "https://github.com/jonkwheeler/ScrollScene/issues"
   },
-  "homepage": "https://github.com/jonkwheeler/ScrollScene#readme",
+  "homepage": "https://scrollscene.jonkwheeler.vercel.app/",
   "keywords": [
     "scrollmagic",
     "scroll",

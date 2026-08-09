@@ -13,4 +13,10 @@ describe('public factory exports', function() {
     expect(typeof observerEntry.createScrollObserver).toBe('function')
     expect((observerEntry as any).ScrollObserver).toBeUndefined()
   })
+
+  it('keeps the observer entry free of ScrollMagic exports', function() {
+    expect((observerEntry as any).ScrollMagic).toBeUndefined()
+    expect((observerEntry as any).addIndicators).toBeUndefined()
+    expect((observerEntry as any).createScrollScene).toBeUndefined()
+  })
 })

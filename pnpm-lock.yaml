@@ -14,9 +14,6 @@ importers:
       '@babel/runtime':
         specifier: ^7.8.4
         version: 7.29.7
-      is-client:
-        specifier: ^0.0.2
-        version: 0.0.2
       lodash.throttle:
         specifier: ^4.1.1
         version: 4.1.1
@@ -78,9 +75,6 @@ importers:
       babel-plugin-module-resolver:
         specifier: ^4.0.0
         version: 4.1.0
-      core-js:
-        specifier: ^3.37.1
-        version: 3.50.0
       cross-env:
         specifier: ^6.0.3
         version: 6.0.3
@@ -2440,9 +2434,6 @@ packages:
     resolution: {integrity: sha512-XGpFGbMLHwSt74YLTKho7Ib242qi6O8MSX+sRokV4oz7iKXvQWGYZthjIhjRGMxjzVkAubBO512dKGYcefmX3Q==}
     engines: {node: '>=6.4.0'}
 
-  core-js@3.50.0:
-    resolution: {integrity: sha512-BRWgOLKkFeCgRudR6zrs8p9XJZcE14grzKMMssoYrk6krtuEZ7MTKPIY5RzOnqsEKIR9kst7wNzphttraT+Yqw==}
-
   core-util-is@1.0.3:
     resolution: {integrity: sha512-ZQBvi1DcpJ4GDqanjucZ2Hj3wEO5pZDS89BWbkcrvdxksJorwUDDZamX9ldFkp9aw2lmBDLgkObEA4DWNJ9FYQ==}
 
@@ -3328,9 +3319,6 @@ packages:
   is-ci@2.0.0:
     resolution: {integrity: sha512-YfJT7rkpQB0updsdHLGWrvhBJfcfzNNawYDNIyQXJz0IViGf75O8EBPKSdvw2rF+LGCsX4FZ8tcr3b19LcZq4w==}
     hasBin: true
-
-  is-client@0.0.2:
-    resolution: {integrity: sha512-ISM/GyQVvE02bgE1mKTsENU89Bz5dm674e0a061Auv6fevMwkpvinMHPdwqVPZ1+kM2RGA0HR3me04xg+VxCnw==}
 
   is-core-module@2.16.2:
     resolution: {integrity: sha512-evOr8xfXKxE6qSR0hSXL2r3sd7ALj8+7jQEUvPYcm5sgZFdJ+AYzT6yNmJenvIYQBgIGwfwz08sL8zoL7yq2BA==}
@@ -7851,8 +7839,6 @@ snapshots:
     dependencies:
       browserslist: 4.28.7
 
-  core-js@3.50.0: {}
-
   core-util-is@1.0.3:
     optional: true
 
@@ -9077,8 +9063,6 @@ snapshots:
   is-ci@2.0.0:
     dependencies:
       ci-info: 2.0.0
-
-  is-client@0.0.2: {}
 
   is-core-module@2.16.2:
     dependencies:

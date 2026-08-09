@@ -2,39 +2,32 @@
 
 # ScrollScene
 
-ScrollScene is an extra layer on top of ScrollMagic as well as using IntersectionObserver to achieve similar effects.
+Factory helpers for scroll-driven scenes: **ScrollScene** (ScrollMagic) and **ScrollObserver** (IntersectionObserver). Same lifecycle vocabulary (`create*` + `destroy`), with advanced engine escape hatches on the handles.
 
 ## Examples
 
-View the online [Storybook](https://scrollscene.jonkwheeler.now.sh).
+[Live Storybook](https://scrollscene.jonkwheeler.vercel.app/)
 
 ## Install
 
-Pick the path that matches what you import.
-
-### Observer only (no ScrollMagic)
-
-You do **not** need `scrollmagic` if you only use IntersectionObserver scenes:
+### Observer only (SSR-safe, no ScrollMagic)
 
 ```bash
 pnpm add scrollscene
 ```
 
-Then import from the **separate** observer entry (not the main package entry):
-
 ```js
 import { createScrollObserver } from 'scrollscene/observer'
 ```
 
-`scrollscene/observer` does not load ScrollMagic. Importing `createScrollObserver` from `'scrollscene'` (main) still loads the ScrollMagic helpers on that entry — use `/observer` for a ScrollMagic-free install.
+`scrollscene/observer` never loads ScrollMagic. Use this path for SSR and for apps that do not need ScrollMagic.
 
 ### ScrollScene (needs ScrollMagic)
 
-If you use `createScrollScene` (or import from the main `'scrollscene'` entry for ScrollMagic helpers), install the peer:
+The main entry is **client/browser-oriented** — it statically imports ScrollMagic. Install the peer and use it in client code (or behind a client-only boundary in Next/Nuxt/etc.):
 
 ```bash
 pnpm add scrollscene scrollmagic
-# or: npm install scrollscene scrollmagic
 ```
 
 ```js
@@ -43,7 +36,7 @@ import { createScrollScene } from 'scrollscene'
 
 ### Migrating to 1.0
 
-**1.0 is a breaking release.** Use `createScrollScene` / `createScrollObserver` instead of `new ScrollScene` / `new ScrollObserver`. Run the migrator:
+**1.0 is a breaking release.** Use `createScrollScene` / `createScrollObserver` instead of `new ScrollScene` / `new ScrollObserver`. The obsolete `ScrollMagicSsr` alias is gone — use `ScrollMagic`. Run the migrator:
 
 ```bash
 pnpm exec scrollscene-codemod path/to/src
@@ -52,57 +45,22 @@ pnpm exec scrollscene-codemod path/to/src
 
 If you are still on `0.0.25`, bump at least to `0.0.26` first (npm `^0.0.25` does not float to `0.0.26`), then upgrade to `1.0.0` and run the codemod.
 
-## Import
+## Import map
 
 | What you need | Install | Import |
 | --- | --- | --- |
-| Observer only, no ScrollMagic | `scrollscene` | `import { createScrollObserver } from 'scrollscene/observer'` |
-| Observer + optional ScrollMagic on main | `scrollscene` (+ `scrollmagic` if you also use Scene) | `import { createScrollObserver } from 'scrollscene'` |
-| ScrollMagic scenes | `scrollscene` + `scrollmagic` | `import { createScrollScene } from 'scrollscene'` |
+| Observer only / SSR | `scrollscene` | `import { createScrollObserver } from 'scrollscene/observer'` |
+| ScrollMagic scenes (client) | `scrollscene` + `scrollmagic` | `import { createScrollScene } from 'scrollscene'` |
+| Re-export ScrollMagic (client) | `scrollscene` + `scrollmagic` | `import { ScrollMagic } from 'scrollscene'` |
 
-### ScrollScene (uses ScrollMagic)
-
-```js
-import { createScrollScene } from 'scrollscene'
-```
-
-Requires the `scrollmagic` peer dependency.
-
-### ScrollObserver without ScrollMagic
-
-```js
-import { createScrollObserver } from 'scrollscene/observer'
-```
-
-No `scrollmagic` install. Prefer this path for Observer-only apps.
-
-### ScrollObserver from the main entry
-
-```js
-import { createScrollObserver } from 'scrollscene'
-```
-
-Works, but the main entry also ships ScrollMagic loaders — use `scrollscene/observer` if you want to skip installing ScrollMagic.
-
-### ScrollMagic (with SSR catch)
-
-```js
-import { ScrollMagic } from 'scrollscene'
-```
-
-or
-
-```js
-import { ScrollMagicSsr } from 'scrollscene'
-```
-
-`ScrollMagic` and `ScrollMagicSsr` are the exact same thing. Only relevant when you use the main entry / `createScrollScene`.
+Importing `createScrollObserver` from `'scrollscene'` (main) still works, but that entry also loads ScrollMagic — prefer `/observer` when you want a ScrollMagic-free install.
 
 ## Which should you use?
 
-Prefer **ScrollObserver** for most use cases. It runs on IntersectionObserver, so the browser computes visibility off the main thread — no scroll-event tax while the user scrolls. For that path, install only `scrollscene` and import from `scrollscene/observer`.
+**ScrollObserver** is based on whether the trigger is **in the viewport** (IntersectionObserver). Use it for visibility toggles, play-when-visible, and similar “is this element on screen?” work. It stays off the scroll-event path. When the element leaves the viewport, Observer only knows it is no longer intersecting — not a ScrollMagic-style “you have scrolled past this waypoint” progress model — unless you opt into `persistWhenPast` (active while in view or scrolled past; inactive only when still below).
 
-Reach for **ScrollScene** when you need ScrollMagic-specific features like `setPin`, a `triggerHook` tied to scroll position, or scrubbing a timeline across a pixel-based `duration` — and install `scrollmagic` with it.
+**ScrollScene** is **waypoint / scroll-position** based (ScrollMagic). Scenes track where you are relative to a trigger (`BEFORE` / `DURING` / `AFTER`), so an action can fire because you reached or passed a point even when that element is no longer on screen. Use it for `setPin`, `triggerHook`, pixel `duration` scrubbing, and anything that depends on scroll progress past a point — not just current visibility.
+
 ## Options
 
 ### ScrollScene Options (uses ScrollMagic)
@@ -118,16 +76,17 @@ Reach for **ScrollScene** when you need ScrollMagic-specific features like `setP
 | `toggle`         | Toggle a className on an element with `toggle: { element: containerRef.current, className: 'lets-do-this' }`. The `element` key does _not_ accept string; eg: `.className`. Use a dom node selector instead.                                                                                                                                                                                                |
 | `triggerElement` | `triggerElement: document.querySelector('#element')` is used to set the element you wish to trigger events based upon. Does _not_ accept string; eg: `.className`. Use a dom node selector instead. Optional: If left blank, will use top of page.                                                                                                                                                          |
 | `triggerHook`    | Used to change the ScrollMagic `triggerHook`.                                                                                                                                                                                                                                                                                                                                                               |
-| methods          | You can actually apply all the ScrollMagic.Scene methods to `ScrollScene`, like `const scrollScene = createScrollScene({...}); scrollScene.scene.on('enter', ())` or `setPin`. See all the options here: http://scrollmagic.io/docs/ScrollMagic.Scene.html. The same goes for ScrollMagic.Controller, `scrollScene.controller.destroy(true)`, but be careful if you're using the built-in `globalController`. |
+| methods          | Apply ScrollMagic.Scene methods via the handle escape hatch: `const scrollScene = createScrollScene({...}); scrollScene.scene.on('enter', …)` or `setPin`. See [ScrollMagic.Scene](http://scrollmagic.io/docs/ScrollMagic.Scene.html). Same for Controller via `scrollScene.controller` — be careful with the built-in `globalController`. |
 
 ### ScrollObserver Options (uses IntersectionObserver)
 
 | option               | Description / Example                                                                                                                                                                                                                                                                                                      |
 | -------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `breakpoints`        | `breakpoints: { 0: false, 768: true }` is used to set responsiveness of the new ScrollMagic.Scene, mobile-first.                                                                                                                                                                                                           |  |
+| `breakpoints`        | `breakpoints: { 0: false, 768: true }` is used to set responsiveness of the scene, mobile-first.                                                                                                                                                                                                           |  |
 | `gsap`               | Init a Gsap timeline with `gsap: { timeline: myTimeline, reverseSpeed: 2, yoyo: true, delay: 2 }`.                                                                                                                                                                                                                         |
 | `observer`           | `observer: { rootMargin: '-50% 0%' }` is used to pass extra options to pass the IntersectionObserver, like `root`, `rootMargin`, or `threshold` (to override the thresholds option). `observer: { rootMargin: '0px', threshold: 1.0 }`                                                                                     |
 | `offset`             | Used to change the `rootMargin` easy. `offset: '-10%` will be `rootMargin: '-10% 0%'`. This is a bit wonky and needs more testing.                                                                                                                                                                                         |
+| `persistWhenPast`    | `persistWhenPast: true` keeps the scene active after the trigger scrolls past the top of the viewport (fade in and stay). It deactivates only when the trigger is entirely below again (scroll back up). Default `false` turns inactive whenever the trigger leaves the viewport either way. |
 | `thresholds`         | `thresholds: 1` is to set the number of thresholds you want. `thresholds: 100 = [0, 0.1, 0.2, ... 0.98, 0.99, 1]`. It's easy to use `whenVisible`.                                                                                                                                                                         |
 | `toggle`             | Toggle a className on an element with `toggle: { element: containerRef.current, className: 'lets-do-this' }`. The `element` key does _not_ accept string; eg: `.className`. Use a dom node selector instead.                                                                                                               |
 | `triggerElement`     | `triggerElement: document.querySelector('#element')` is used to set the element you wish to trigger events based upon. Does _not_ accept string; eg: `.className`. Use a dom node selector instead.                                                                                                                        |
@@ -140,20 +99,12 @@ See below for examples.
 
 ## Key Notes
 
-- This project sought out to overcome the issues of using Gsap3 with ScrollMagic, as well as ESM related problems. In the end it added more features, like video playback, scene init breakpoints, scene duration breakpoints, gsap speed controls, and using an IntersectionObserver when it fits your usecase better.
-- Is written in TypeScript so you have access to the types.
-- This does not include `gsap` or `scrollmagic`. Observer-only apps: install `scrollscene` alone and import from `scrollscene/observer`. ScrollMagic scenes: also install `scrollmagic` and import `createScrollScene` from `'scrollscene'`. Main-entry `createScrollObserver` still works but is not ScrollMagic-free.
-- This works with Gsap without having to import the extra `animation.gsap.js` file from ScrollMagic (though you'll have to install in yourself `pnpm add gsap` or `npm install gsap`). In turn this is smaller than using ScrollMagic and animation.gsap.js.
-- It allows for scene init breakpoints, and for scene duration breakpoints. This will also will on SSR if implemented correctly.
-- You do not need to create a ScrollMagic controller. It is done for you.
-- Does not work with `jQuery`. You need to provide a domNodeSelector. Whether a `document.querySelector('#element')` or React ref `myRef.current`.
-- You can add all the methods from ScrollMagic.Scene directly onto the `scrollScene`. See options here http://scrollmagic.io/docs/ScrollMagic.Scene.html. You can do a `setPin`, or `on` event handler.
-
-## Next Steps
-
-- Add native setPin functionality using ScrollObserver to deprecate using it with ScrollMagic.
-- Add out-of-the-box split text animations, svg line draw, etc...
-- Move ScrollObserver to a separate package.
+- TypeScript types ship with the package.
+- `gsap` and `scrollmagic` are not bundled. Observer-only: install `scrollscene` and import from `scrollscene/observer`. ScrollMagic scenes: also install `scrollmagic` and use the main entry on the client.
+- Works with GSAP without ScrollMagic’s `animation.gsap.js` plugin (`pnpm add gsap`).
+- Scene init and duration breakpoints are built in; controllers are created for you.
+- Pass DOM nodes (or refs like `myRef.current`), not CSS selector strings or jQuery.
+- Advanced: use `scrollScene.scene` / `scrollScene.controller` for ScrollMagic APIs (`setPin`, `on`, …). Use `scrollObserver.observer` for the underlying IntersectionObserver.
 
 ## Usage
 
@@ -390,9 +341,9 @@ const scrollScene = createScrollScene({
 })
 ```
 
-#### Add Indicators (Using the addIndicators plugin from ScrollMagic)
+#### Add Indicators (ScrollMagic debug plugin)
 
-I added to this package a modified version of the addIndicators plugin. It's easy to use. Just remember to remove it after you're done testing so it doesn't go into production.
+This package includes a modified `addIndicators` plugin. Import `addIndicators` from the main entry so the plugin registers (side effect). Remove it before shipping production.
 
 ```js
 import { createScrollScene, addIndicators } from 'scrollscene'
@@ -446,7 +397,7 @@ scrollScene.controller
 #### Toggle a className while element is visible on the page
 
 ```js
-import { createScrollObserver } from 'scrollscene'
+import { createScrollObserver } from 'scrollscene/observer'
 import { gsap } from 'gsap'
 
 const domNode = document.querySelector('#element')
@@ -461,10 +412,30 @@ const scrollObserver = createScrollObserver({
 })
 ```
 
+#### Keep active after scrolling past (fade in and stay)
+
+```js
+import { createScrollObserver } from 'scrollscene/observer'
+
+const domNode = document.querySelector('#element')
+const anotherDomNode = document.querySelector('#element2')
+
+const scrollObserver = createScrollObserver({
+  triggerElement: domNode,
+  persistWhenPast: true,
+  toggle: {
+    element: anotherDomNode,
+    className: 'is-visible',
+  },
+})
+```
+
+With `persistWhenPast: true`, the scene stays active after the trigger leaves the top of the viewport. It turns inactive again only when the trigger is entirely below (scroll back up past it). Same rule applies to `gsap`, `video`, and `callback`.
+
 #### Toggle a Gsap animation while element is visible on the page
 
 ```js
-import { createScrollObserver } from 'scrollscene'
+import { createScrollObserver } from 'scrollscene/observer'
 import { gsap } from 'gsap'
 
 // create a timeline and add a tween
@@ -489,7 +460,7 @@ const scrollObserver = createScrollObserver({
 #### Toggle a Gsap animation while element is visible on the page with a yoyo effect and repeat delay of 0
 
 ```js
-import { createScrollObserver } from 'scrollscene'
+import { createScrollObserver } from 'scrollscene/observer'
 import { gsap } from 'gsap'
 
 // create a timeline and add a tween
@@ -516,7 +487,7 @@ const scrollObserver = createScrollObserver({
 #### Scrub a Gsap timeline based on element visibility
 
 ```js
-import { createScrollObserver } from 'scrollscene'
+import { createScrollObserver } from 'scrollscene/observer'
 import { gsap } from 'gsap'
 
 // create a timeline and add a tween
@@ -542,7 +513,7 @@ const scrollObserver = createScrollObserver({
 #### Start a video when an element is visible and pause the video when it's not
 
 ```js
-import { createScrollObserver } from 'scrollscene'
+import { createScrollObserver } from 'scrollscene/observer'
 
 const domNode = document.querySelector('#element')
 const videoTagDomNode = document.querySelector('#video')
@@ -560,7 +531,7 @@ const scrollObserver = createScrollObserver({
 #### Using a scene once
 
 ```js
-import { createScrollObserver } from 'scrollscene'
+import { createScrollObserver } from 'scrollscene/observer'
 
 const domNode = document.querySelector('#element')
 
@@ -573,7 +544,7 @@ const scrollObserver = createScrollObserver({
 #### Set a percentage for the visibility threshold
 
 ```js
-import { createScrollObserver } from 'scrollscene'
+import { createScrollObserver } from 'scrollscene/observer'
 
 const domNode = document.querySelector('#element')
 
@@ -588,7 +559,7 @@ const scrollObserver = createScrollObserver({
 The below would create an array of 100 thresholds ([0, 0.1, 0.2, ... 0.98, 0.99, 1]), effectively says any percent from 1 to 100 of the element intersecting the viewport should trigger the scene.
 
 ```js
-import { createScrollObserver } from 'scrollscene'
+import { createScrollObserver } from 'scrollscene/observer'
 
 const domNode = document.querySelector('#element')
 
@@ -603,7 +574,7 @@ const scrollObserver = createScrollObserver({
 The below adds extra options to the IntersectionObserver. See others properities you could add [here](https://developer.mozilla.org/en-US/docs/Web/API/IntersectionObserver).
 
 ```js
-import { createScrollObserver } from 'scrollscene'
+import { createScrollObserver } from 'scrollscene/observer'
 
 const domNode = document.querySelector('#element')
 
@@ -616,7 +587,7 @@ const scrollObserver = createScrollObserver({
 or
 
 ```js
-import { createScrollObserver } from 'scrollscene'
+import { createScrollObserver } from 'scrollscene/observer'
 
 const domNode = document.querySelector('#element')
 
@@ -704,7 +675,7 @@ const scrollScene = createScrollScene({
 })
 ```
 
-`duration` also can be responsive, finally! The below would set up a scene that lasts 50vh on mobile, 100% after.
+`duration` also can be responsive. The below would set up a scene that lasts 50vh on mobile, 100% after.
 
 ```js
 const scrollScene = createScrollScene({
@@ -712,54 +683,4 @@ const scrollScene = createScrollScene({
 })
 ```
 
-## Polyfill
-
-In order to use ScrollObserver on IE, you'll need a polyfill IntersectionObserver. You can do this with loading a polyfill script from https://polyfill.io/.
-
-### Using Next.js or Webpack?
-
-With Next.js you can load polyfills another way. See https://github.com/zeit/next.js/blob/canary/examples/with-polyfills/client/polyfills.js.
-
-Add following to `client/polyfills.js`
-
-```js
-/*
- * This files runs at the very beginning (even before React and Next.js core)
- * https://github.com/zeit/next.js/blob/canary/examples/with-polyfills/client/polyfills.js
- */
-
-// https://www.npmjs.com/package/intersection-observer
-import 'intersection-observer'
-```
-
-And then modify the `next.config.js`
-
-```js
-// next.config.js
-
-const nextConfig = {
-  webpack(config) {
-    /*
-     * Add polyfills
-     * https://github.com/zeit/next.js/blob/canary/examples/with-polyfills/next.config.js
-     */
-
-    const originalEntry = config.entry
-    config.entry = async () => {
-      const entries = await originalEntry()
-
-      if (entries['main.js'] && !entries['main.js'].includes('./client/polyfills.js')) {
-        entries['main.js'].unshift('./client/polyfills.js')
-      }
-
-      return entries
-    }
-
-    return config
-  },
-}
-
-module.exports = nextConfig
-```
-
-For more on ScrollMagic, hit up [scrollmagic.io/](https://www.scrollmagic.io/) and [https://github.com/janpaepke/ScrollMagic](https://github.com/janpaepke/ScrollMagic)
+For more on ScrollMagic, see [scrollmagic.io](https://www.scrollmagic.io/) and [janpaepke/ScrollMagic](https://github.com/janpaepke/ScrollMagic).

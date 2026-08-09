@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 /**
  * ScrollScene 1.0 migrator — rewrites `new ScrollScene` / `new ScrollObserver`
- * to factories and Scene/Controller property access to handle.scene/controller.
+ * to factories, Scene/Controller property access to handle.scene/controller,
+ * and removes the obsolete `ScrollMagicSsr` alias in favor of `ScrollMagic`.
  *
  * Usage:
  *   pnpm exec scrollscene-codemod <file-or-glob> [...]
@@ -10,6 +11,26 @@
 
 const fs = require('fs')
 const path = require('path')
+
+function dedupeNamedBindings(bindings) {
+  const seen = {}
+  const kept = []
+
+  bindings.split(',').forEach(function(part) {
+    const trimmed = part.trim()
+    if (!trimmed) {
+      return
+    }
+
+    if (seen[trimmed]) {
+      return
+    }
+    seen[trimmed] = true
+    kept.push(trimmed)
+  })
+
+  return kept.join(', ')
+}
 
 function transformSource(source) {
   let next = source
@@ -21,16 +42,19 @@ function transformSource(source) {
   next = next.replace(
     /import\s*\{([^}]*)\}\s*from\s*(['"])scrollscene(\/observer)?\2/g,
     function(_match, bindings, quote, subpath) {
-      const rewritten = bindings
-        .split(',')
-        .map(function(part) {
-          return part
-            .replace(/\bScrollScene\b/g, 'createScrollScene')
-            .replace(/\bScrollObserver\b/g, 'createScrollObserver')
-        })
-        .join(',')
+      const rewritten = dedupeNamedBindings(
+        bindings
+          .split(',')
+          .map(function(part) {
+            return part
+              .replace(/\bScrollScene\b/g, 'createScrollScene')
+              .replace(/\bScrollObserver\b/g, 'createScrollObserver')
+              .replace(/\bScrollMagicSsr\b/g, 'ScrollMagic')
+          })
+          .join(','),
+      )
       const fromPath = subpath ? 'scrollscene/observer' : 'scrollscene'
-      return 'import {' + rewritten + '} from ' + quote + fromPath + quote
+      return 'import { ' + rewritten + ' } from ' + quote + fromPath + quote
     },
   )
 
@@ -52,7 +76,8 @@ function transformSource(source) {
     'import { createScrollObserver, $1} from $2$3$2',
   )
 
-  /* relative default-style is uncommon; named imports covered above */
+  /* remaining ScrollMagicSsr identifiers (imports already rewritten above) */
+  next = next.replace(/\bScrollMagicSsr\b/g, 'ScrollMagic')
 
   /* Only rewrite handle property access — never ScrollMagic / scrollMagic class APIs */
   next = next.replace(/\b(?![Ss]croll[Mm]agic)(\w+)\.Scene\b/g, '$1.scene')
